@@ -138,6 +138,8 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
 
     variable topfile
     variable trjfile
+    variable ligtopfile
+    variable ligtrjfile
     variable toptype
     variable trjtype
     variable parfile
@@ -211,7 +213,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
                 }
                 -trj_type {
                     set trjtype [check_string $val "trj_type"]
-
+                }
                 -lig_top {
                     set ligtopfile [check_file $val "lig_top"]
                 }
