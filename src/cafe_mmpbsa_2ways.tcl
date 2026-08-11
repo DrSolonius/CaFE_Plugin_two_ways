@@ -218,7 +218,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
                     set ligtopfile [check_file $val "lig_top"]
                 }
                 -lig_trj {
-                lappend ligtrjfile [check_file $val "lig_trj"]
+                    lappend ligtrjfile [check_file $val "lig_trj"]
                     }    
                 
                 -par {
