@@ -1,6 +1,6 @@
-package provide cafe_mmpbsa 1.0
+package provide cafe_mmpbsa_2ways 1.0
 
-namespace eval ::cafe::mmpbsa:: {
+namespace eval ::cafe::mmpbsa_2ways:: {
     package require readcharmmpar ;# for ::Pararead::getvdwparam
     package require topotools ;# for "topo guessatom"
     package require cafe_tools
