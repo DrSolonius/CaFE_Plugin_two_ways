@@ -16,7 +16,7 @@ namespace eval ::cafe::mmpbsa_2ways:: {
     -top -trj -top_type -trj_type
     -lig_top -lig_trj -lig_top_type -lig_trj_type -lig_first -lig_last -lig_stride -lig_free
     -par -out -debug -first -last -stride
-    -com -rec -lig -mm -mm_exe -mm_diel -pb -pb_exe -pb_siz -pb_crg -pb_rad
+    -com -rec -mm -mm_exe -mm_diel -pb -pb_exe -pb_siz -pb_crg -pb_rad
     -pb_indi -pb_exdi -pb_scale -pb_perfil -pb_prbrad -pb_linit -pb_maxc
     -pb_bndcon -pb_bcfl -pb_chgm -pb_srfm -pb_swin -pb_sdens -gb
     -gb_exdi -gb_ioncon -gb_sa -gb_sagamma -sa -sa_exe -sa_rad -sa_gamma
@@ -46,7 +46,6 @@ namespace eval ::cafe::mmpbsa_2ways:: {
     variable stride 1
     variable comsel ""
     variable recsel ""
-    variable ligsel ""
     variable ligfreesel ""
     variable mm 0
     variable mm_exe "namd2"
@@ -112,7 +111,6 @@ proc ::cafe::mmpbsa_2ways::print_usage { } {
     show -info "  -stride <stride>                 -- default: 1"
     show -info "  -com <complex selection>         -- default: \"\""
     show -info "  -rec <receptor selection>        -- default: \"\""
-    show -info "  -lig <ligand selection>          -- default: \"\""
     show -info "  -mm <do gas-phase calculation>   -- default: 0"
     show -info "  -mm_exe <path to NAMD>           -- default: \"namd2\""
     show -info "  -mm_diel <dielectric constant>   -- default: 1.0"
@@ -171,7 +169,6 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     variable stride
     variable comsel
     variable recsel
-    variable ligsel
     variable ligfreesel
     variable mm
     variable mm_exe
@@ -279,9 +276,6 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
                 }
                 -rec {
                     set recsel $val
-                }
-                -lig {
-                    set ligsel $val
                 }
                 -lig_free {
                     set ligfreesel $val
@@ -505,10 +499,10 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     }
 
     if { $recsel eq "" } {
-    show -err "Selection of receptor must be specified for multi-trajectory MM/PBSA"
+        show -err "Selection of receptor must be specified for multi-trajectory MM/PBSA"
     }
 
-    foreach name { complex receptor ligand } selstr [list $comsel $recsel $ligsel] {
+    foreach name { complex receptor } selstr [list $comsel $recsel] {
         if { $selstr ne "" } {
             set sel [atomselect $currmol $selstr]
             set natoms [$sel num]
