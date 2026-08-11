@@ -592,6 +592,18 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     if { $ligtoptype ne "psf" && $ligtoptype ne "parm" && $ligtoptype ne "parm7" } {
         show -err "Currently only AMBER- and CHARMM/X-PLOR-formatted free ligand topology files are supported"
     }
+    
+    # check free ligand selection
+    set lig_free_sel [atomselect $ligmol $ligfreesel]
+    set lig_free_natoms [$lig_free_sel num]
+
+    if { !$lig_free_natoms } {
+        show -err "Found zero atoms for free ligand selection"
+    } else {
+        show -info "Found $lig_free_natoms atoms for free ligand"
+    }
+
+    $lig_free_sel delete
 
     # check free ligand frame range
     if { $liglast != -1 && $liglast < $ligfirst } {
