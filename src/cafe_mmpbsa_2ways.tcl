@@ -803,7 +803,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
         write_out $result " Receptor:" $sepline $rec_ele_list $rec_vdw_list $rec_pb_list $rec_sa_list
     }
 
-    if { $ligsel ne "" } {
+    if { $ligfreesel ne "" } {
         if { !$mm } {
             set lig_ele_list { }
             set lig_vdw_list { }
