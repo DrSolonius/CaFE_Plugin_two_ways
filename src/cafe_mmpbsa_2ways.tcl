@@ -830,7 +830,15 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
 
     close $result
 
-    if { $debug < 2 } { file delete $com_trj }
+    if { $debug < 2 } {
+    if { [file exists $com_trj] } {
+        file delete $com_trj
+    }
+
+    if { [file exists $lig_trj] } {
+        file delete $lig_trj
+    }
+    }
 
     foreach { d h m s } [timer $start] { break }
     show -info "It took $d days $h hrs $m min $s sec"
