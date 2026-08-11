@@ -237,14 +237,13 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
                 }
                 -lig_trj {
                     lappend ligtrjfile [check_file $val "lig_trj"]
-
+                }
                 -lig_top_type {
                     set ligtoptype [check_string $val "lig_top_type"]
                 }
                 -lig_trj_type {
                     set ligtrjtype [check_string $val "lig_trj_type"]
-                
-                }    
+                }
                 -lig_first {
                     set ligfirst [check_int $val "lig_first"]
                 }
