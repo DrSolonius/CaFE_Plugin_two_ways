@@ -1582,7 +1582,27 @@ proc ::cafe::mmpbsa_2ways::calc_pb { molid prefix selstr framefirst framestride 
     variable j2cal
     variable debug
 
-    if { $pb == 1 } {
+     # Check whether the selected component has any atomic charge
+    set qsel [atomselect $molid $selstr]
+    set qabs 0.0
+
+    foreach q [$qsel get charge] {
+        set qabs [expr {$qabs + abs($q)}]
+    }
+
+    $qsel delete
+
+    # An entirely uncharged component has zero polar PB energy.
+    # Avoid calling APBS/DelPhi because the PB source term is zero.
+    if { $qabs < 1.0e-8 } {
+
+        set nframes [molinfo $molid get numframes]
+        set pb_list [lrepeat $nframes 0.0]
+        set conv 1.0
+
+        show -info "All atomic charges are zero for $prefix; PB energy set to 0.0"
+
+    } elseif { $pb == 1 } {
         set pb_list [run_delphi $molid $prefix $selstr $framefirst $framestride]
         set conv $kt2kc
     } elseif { $pb == 2 } {
