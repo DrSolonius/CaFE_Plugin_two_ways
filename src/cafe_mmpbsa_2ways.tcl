@@ -752,8 +752,8 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
             set rec_sa_list [calc_sa $currmol rec $recsel $first $stride]
         }
 
-        if { $ligsel ne "" } {
-            set lig_sa_list [calc_sa $currmol lig $ligsel $first $stride]
+        if { $ligfreesel ne "" } {
+            set lig_sa_list [calc_sa $ligmol lig $ligfreesel $ligfirst $ligstride]
         }
 
         foreach { d h m s } [timer $start] { break }
