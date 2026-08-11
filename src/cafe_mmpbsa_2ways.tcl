@@ -691,7 +691,18 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
             append ar_args " \"$topfile\""
         }
         eval assign_radii $ar_args
+        # assign radii to independent free ligand
+        set lig_ar_args "$ligmol $pb_rad"
 
+        if { $pb_rad eq "charmm" } {
+            foreach p $parfile {
+                append lig_ar_args " \"$p\""
+            }
+        } elseif { $pb_rad eq "parm7" } {
+            append lig_ar_args " \"$ligtopfile\""
+        }
+
+        eval assign_radii $lig_ar_args
         set com_pb_list [calc_pb $currmol com $comsel $first $stride]
 
         if { $recsel ne "" } {
