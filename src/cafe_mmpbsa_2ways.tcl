@@ -1826,9 +1826,7 @@ proc ::cafe::mmpbsa_2ways::parse_apbs { fname opt } {
 # ######################################################################
 #                             SA related
 # ######################################################################
-proc ::cafe::mmpbsa_2ways::calc_sa { molid prefix selstr } {
-    variable first
-    variable stride
+proc ::cafe::mmpbsa_2ways::calc_sa { molid prefix selstr framefirst framestride } {
     variable sa
     variable sa_prbrad
     variable sa_samples
@@ -1852,7 +1850,7 @@ proc ::cafe::mmpbsa_2ways::calc_sa { molid prefix selstr } {
         set frames { }
 
         for { set i 0 } { $i < [llength $sa_list] } { incr i } {
-            lappend frames [expr $first + $i*$stride]
+            lappend frames [expr $framefirst + $i*$framestride]
         }
 
         set data { }
@@ -1893,9 +1891,7 @@ proc ::cafe::mmpbsa_2ways::run_vmd { molid prefix selstr } {
 }
 
 # calculate SASA/SAV/WCA by APBS
-proc ::cafe::mmpbsa_2ways::run_apbs_apol { molid prefix selstr } {
-    variable first
-    variable stride
+proc ::cafe::mmpbsa_2ways::run_apbs_apol { molid prefix selstr framefirst framestride } {
     variable sa_exe
     variable sa_prbrad
     variable sa_samples
