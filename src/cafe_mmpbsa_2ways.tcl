@@ -30,6 +30,10 @@ namespace eval ::cafe::mmpbsa_2ways:: {
     # Independent free-ligand simulation for two-trajectory MM/PBSA
     variable ligtopfile ""
     variable ligtrjfile { }
+    variable ligfirst 0
+    variable liglast -1
+    variable ligstride 1
+
     variable parfile { }
     variable method ""
 
@@ -144,6 +148,12 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     variable ligtopfile
     variable ligtrjfile
     variable toptype
+    variable ligtopfile
+    variable ligtrjfile
+    variable ligfirst
+    variable liglast
+    variable ligstride
+    variable toptype
     variable trjtype
     variable parfile
     variable outfile
@@ -222,8 +232,16 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
                 }
                 -lig_trj {
                     lappend ligtrjfile [check_file $val "lig_trj"]
-                    }    
-                
+                }    
+                -lig_first {
+                    set ligfirst [check_int $val "lig_first"]
+                }
+                -lig_last {
+                    set liglast [check_int $val "lig_last"]
+                }
+                -lig_stride {
+                    set ligstride [check_pos_int $val "lig_stride"]
+                }
                 -par {
                     lappend parfile [check_file $val "par"]
                 }
