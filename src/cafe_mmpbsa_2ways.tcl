@@ -1837,7 +1837,8 @@ proc ::cafe::mmpbsa_2ways::calc_sa { molid prefix selstr framefirst framestride 
     if { $sa == 1 } {
         set sa_list [run_vmd $molid $prefix $selstr]
     } elseif { $sa == 2 } {
-        set sa_list [run_apbs_apol $molid $prefix $selstr]
+        set sa_list [run_apbs_apol $molid $prefix $selstr \
+    $framefirst $framestride]
     } else {
         show -err "Unknown non-polar type"
     }
