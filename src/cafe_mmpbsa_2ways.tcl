@@ -29,6 +29,7 @@ namespace eval ::cafe::mmpbsa_2ways:: {
     variable ligtopfile ""
     variable ligtrjfile { }
     variable parfile { }
+    variable method ""
 
     variable outfile "result.log"
     variable debug 0
@@ -188,7 +189,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     variable sa_beta
     variable sa_prbrad
     variable sa_samples
-    variable method ""
+    
     # *********************************************************
     # **************** Do the Preparation Work ****************
     # *********************************************************
