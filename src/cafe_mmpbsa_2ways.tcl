@@ -628,10 +628,6 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     show -info "Loaded [molinfo $ligmol get numframes] frames for free ligand"
 
 
-
-
-
-
     foreach { d h m s } [timer $start0] { break }
     show -info "It took $d days $h hrs $m min $s sec"
 
@@ -642,16 +638,16 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
         show -info "Calculating the MM term"
         set start [clock seconds]
 
-        set com_mm_result [calc_mm $currmol com $comsel $com_trj]
+        set com_mm_result [calc_mm $currmol com $comsel $com_trj $topfile $toptype $first $stride]
         foreach { com_ele_list com_vdw_list } $com_mm_result { break }
 
         if { $recsel ne "" } {
-            set rec_mm_result [calc_mm $currmol rec $recsel $com_trj]
+            set rec_mm_result [calc_mm $currmol rec $recsel $com_trj $topfile $toptype $first $stride]
             foreach { rec_ele_list rec_vdw_list } $rec_mm_result { break }
         }
 
         if { $ligsel ne "" } {
-            set lig_mm_result [calc_mm $currmol lig $ligsel $com_trj]
+            set lig_mm_result [calc_mm $currmol lig $ligsel $com_trj $topfile $toptype $first $stride]
             foreach { lig_ele_list lig_vdw_list } $lig_mm_result { break }
         }
 
@@ -867,9 +863,7 @@ proc ::cafe::mmpbsa_2ways::write_out { fp title end ele_list vdw_list pb_list sa
 # ######################################################################
 #                            MM related
 # ######################################################################
-proc ::cafe::mmpbsa_2ways::calc_mm { molid prefix selstr trajname } {
-    variable first
-    variable stride
+proc ::cafe::mmpbsa_2ways::calc_mm { molid prefix selstr trajname topname topfmt framefirst framestride } {
     variable debug
 
     # NOTE: There is a bug in namdEnergy plugin 1.4. It was said that "skip" was
@@ -880,7 +874,7 @@ proc ::cafe::mmpbsa_2ways::calc_mm { molid prefix selstr trajname } {
     # "stride". That is to say, if the first frame is N, the next one is actually
     # N + $skip.
 
-    set mm_list [run_namd $molid $prefix $selstr $trajname]
+    set mm_list [run_namd $molid $prefix $selstr $trajname $topname $topfmt]
 
     set ele_list { }
     set vdw_list { }
@@ -901,7 +895,7 @@ proc ::cafe::mmpbsa_2ways::calc_mm { molid prefix selstr trajname } {
         set frames { }
 
         for { set i 0 } { $i < [llength $mm_list] } { incr i } {
-            lappend frames [expr $first + $i*$stride]
+            lappend frames [expr $framefirst + $i*$framestride]
         }
 
         set data { }
@@ -917,11 +911,11 @@ proc ::cafe::mmpbsa_2ways::calc_mm { molid prefix selstr trajname } {
 }
 
 # calculate MM and/or GB by NAMD
-proc ::cafe::mmpbsa_2ways::run_namd { molid prefix selstr trajname } {
+proc ::cafe::mmpbsa_2ways::run_namd { molid prefix selstr trajname topname topfmt } {
     variable mm_exe
     variable debug
 
-    write_namd_conf $molid $prefix $selstr $trajname
+    write_namd_conf $molid $prefix $selstr $trajname $topname $topfmt
     exec $mm_exe ${prefix}_mm_tmp.namd > ${prefix}_mm_tmp.log
     set result [parse_namd ${prefix}_mm_tmp.log]
     if { $debug < 2 } { cleanup ${prefix}_mm }
@@ -930,9 +924,8 @@ proc ::cafe::mmpbsa_2ways::run_namd { molid prefix selstr trajname } {
 
 # write a NAMD configuration file
 # revised from namdenergy1.4
-proc ::cafe::mmpbsa_2ways::write_namd_conf { molid prefix selstr trajname } {
-    variable toptype
-    variable topfile
+proc ::cafe::mmpbsa_2ways::write_namd_conf { molid prefix selstr trajname topname topfmt } {
+    variable parfile
     variable parfile
     variable mm_diel
     variable gb
@@ -955,12 +948,12 @@ proc ::cafe::mmpbsa_2ways::write_namd_conf { molid prefix selstr trajname } {
     }
 
     # set up topology and parameters
-    if { $toptype eq "parm" || $toptype eq "parm7" } {
+    if { $topfmt eq "parm" || $topfmt eq "parm7" } {
         puts $namdconf "amber on"
-        puts $namdconf "parmfile $topfile"
+        puts $namdconf "parmfile $topname"
         puts $namdconf "readexclusions yes"
     } else {
-        puts $namdconf "structure $topfile"
+        puts $namdconf "structure $topname"
         puts $namdconf "paraTypeCharmm on"
         foreach pf $parfile {
            puts $namdconf "parameters $pf"
@@ -970,7 +963,7 @@ proc ::cafe::mmpbsa_2ways::write_namd_conf { molid prefix selstr trajname } {
 
     puts $namdconf "numsteps 1"
     puts $namdconf "exclude scaled1-4"
-    if { $toptype eq "parm" || $toptype eq "parm7" } {
+    if { $topfmt eq "parm" || $topfmt eq "parm7" } {
         puts $namdconf "1-4scaling 0.8333333333333333"
         puts $namdconf "scnb 2.0"
     }
