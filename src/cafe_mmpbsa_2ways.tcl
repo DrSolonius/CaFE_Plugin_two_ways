@@ -29,7 +29,7 @@ namespace eval ::cafe::mmpbsa_2ways:: {
     variable ligtopfile ""
     variable ligtrjfile { }
     variable parfile { }
-    
+
     variable outfile "result.log"
     variable debug 0
     variable first 0
@@ -83,6 +83,8 @@ proc ::cafe::mmpbsa_2ways::print_usage { } {
     show -info "Mandatory arguments:"
     show -info "  -top <topology filename>"
     show -info "  -trj <trajectory filename>"
+    show -info "  -lig_top <free ligand topology>    -- optional, enables 2-way mode"
+    show -info "  -lig_trj <free ligand trajectory> -- optional, enables 2-way mode"
     show -info "Optional arguments:"
     show -info "  -top_type <topology filetype>    -- default: auto"
     show -info "  -trj_type <trajectory filetype>  -- default: auto"
@@ -209,6 +211,13 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
                 }
                 -trj_type {
                     set trjtype [check_string $val "trj_type"]
+
+                -lig_top {
+                    set ligtopfile [check_file $val "lig_top"]
+                }
+                -lig_trj {
+                lappend ligtrjfile [check_file $val "lig_trj"]
+                    }    
                 }
                 -par {
                     lappend parfile [check_file $val "par"]
