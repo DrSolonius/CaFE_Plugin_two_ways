@@ -692,14 +692,14 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
         }
         eval assign_radii $ar_args
 
-        set com_pb_list [calc_pb $currmol com $comsel]
+        set com_pb_list [calc_pb $currmol com $comsel $first $stride]
 
         if { $recsel ne "" } {
-            set rec_pb_list [calc_pb $currmol rec $recsel]
+            set rec_pb_list [calc_pb $currmol rec $recsel $first $stride]
         }
 
         if { $ligsel ne "" } {
-            set lig_pb_list [calc_pb $currmol lig $ligsel]
+            set lig_pb_list [calc_pb $currmol lig $ligsel $first $stride]
         }
 
         foreach { d h m s } [timer $start] { break }
@@ -1434,19 +1434,17 @@ proc ::cafe::mmpbsa_2ways::assign_radii_yamagishi { molid } {
     show -err "Not implemented yet"
 }
 
-proc ::cafe::mmpbsa_2ways::calc_pb { molid prefix selstr } {
+proc ::cafe::mmpbsa_2ways::calc_pb { molid prefix selstr framefirst framestride } {
     variable pb
     variable kt2kc
     variable j2cal
-    variable first
-    variable stride
     variable debug
 
     if { $pb == 1 } {
-        set pb_list [run_delphi $molid $prefix $selstr]
+        set pb_list [run_delphi $molid $prefix $selstr $framefirst $framestride]
         set conv $kt2kc
     } elseif { $pb == 2 } {
-        set pb_list [run_apbs $molid $prefix $selstr]
+        set pb_list [run_apbs $molid $prefix $selstr $framefirst $framestride]
         set conv $j2cal
     } else {
         show -err "Unknown PB type"
@@ -1460,7 +1458,7 @@ proc ::cafe::mmpbsa_2ways::calc_pb { molid prefix selstr } {
         set frames { }
 
         for { set i 0 } { $i < [llength $pb_list] } { incr i } {
-            lappend frames [expr $first + $i*$stride]
+            lappend frames [expr $framefirst + $i*$framestride]
         }
 
         set data { }
@@ -1476,9 +1474,7 @@ proc ::cafe::mmpbsa_2ways::calc_pb { molid prefix selstr } {
 }
 
 # solve PBE by DelPhi
-proc ::cafe::mmpbsa_2ways::run_delphi { molid prefix selstr } {
-    variable first
-    variable stride
+proc ::cafe::mmpbsa_2ways::run_delphi { molid prefix selstr framefirst framestride } {
     variable pb_exe
     variable pb_siz
     variable pb_crg
@@ -1498,7 +1494,7 @@ proc ::cafe::mmpbsa_2ways::run_delphi { molid prefix selstr } {
 
     for { set i 0 } { $i < [molinfo $molid get numframes] } { incr i } {
         molinfo $molid set frame $i
-        set iframe [expr $first + $i*$stride]
+        set iframe [expr $framefirst + $i*$framestride]
 
         set tmp_prefix ${prefix}_pb_tmp_${iframe}
 
@@ -1632,9 +1628,7 @@ proc ::cafe::mmpbsa_2ways::parse_delphi { fname } {
 }
 
 # solve PBE by APBS
-proc ::cafe::mmpbsa_2ways::run_apbs { molid prefix selstr } {
-    variable first
-    variable stride
+proc ::cafe::mmpbsa_2ways::run_apbs { molid prefix selstr framefirst framestride } {
     variable pb_exe
     variable pb_indi
     variable pb_exdi
@@ -1654,7 +1648,7 @@ proc ::cafe::mmpbsa_2ways::run_apbs { molid prefix selstr } {
 
     for { set i 0 } { $i < [molinfo $molid get numframes] } { incr i } {
         molinfo $molid set frame $i
-        set iframe [expr $first + $i*$stride]
+        set iframe [expr $framefirst + $i*$framestride]
 
         set tmp_prefix ${prefix}_pb_tmp_${iframe}
         set tmp_pqr ${tmp_prefix}.pqr
