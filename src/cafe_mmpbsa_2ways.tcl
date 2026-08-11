@@ -220,7 +220,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
                 -lig_trj {
                 lappend ligtrjfile [check_file $val "lig_trj"]
                     }    
-                }
+                
                 -par {
                     lappend parfile [check_file $val "par"]
                 }
