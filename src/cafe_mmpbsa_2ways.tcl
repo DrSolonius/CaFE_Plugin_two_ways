@@ -733,14 +733,14 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
         }
         eval assign_radii $ar_args
 
-        set com_sa_list [calc_sa $currmol com $comsel]
+        set com_sa_list [calc_sa $currmol com $comsel $first $stride]
 
         if { $recsel ne "" } {
-            set rec_sa_list [calc_sa $currmol rec $recsel]
+            set rec_sa_list [calc_sa $currmol rec $recsel $first $stride]
         }
 
         if { $ligsel ne "" } {
-            set lig_sa_list [calc_sa $currmol lig $ligsel]
+            set lig_sa_list [calc_sa $currmol lig $ligsel $first $stride]
         }
 
         foreach { d h m s } [timer $start] { break }
@@ -1904,7 +1904,7 @@ proc ::cafe::mmpbsa_2ways::run_apbs_apol { molid prefix selstr framefirst frames
 
     for { set i 0 } { $i < [molinfo $molid get numframes] } { incr i } {
         molinfo $molid set frame $i
-        set iframe [expr $first + $i*$stride]
+        set iframe [expr $framefirst + $i*$framestride]
 
         set tmp_prefix ${prefix}_sa_tmp_${iframe}
         set tmp_pqr ${tmp_prefix}.pqr
