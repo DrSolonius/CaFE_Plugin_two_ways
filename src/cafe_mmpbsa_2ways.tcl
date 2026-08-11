@@ -243,7 +243,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
                 }
                 -lig_trj_type {
                     set ligtrjtype [check_string $val "lig_trj_type"]
-                }
+                
                 }    
                 -lig_first {
                     set ligfirst [check_int $val "lig_first"]
