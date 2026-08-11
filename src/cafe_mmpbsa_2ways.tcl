@@ -504,8 +504,8 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
         show -err "Selection of complex must be specified"
     }
 
-    if { ($recsel eq "" && $ligsel ne "") || ($recsel ne "" && $ligsel eq "") } {
-        show -err "Selections of both receptor and ligand should be specified"
+    if { $recsel eq "" } {
+    show -err "Selection of receptor must be specified for multi-trajectory MM/PBSA"
     }
 
     foreach name { complex receptor ligand } selstr [list $comsel $recsel $ligsel] {
