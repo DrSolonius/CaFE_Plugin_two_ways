@@ -320,7 +320,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
         show -err "Multi-trajectory MM/PBSA requires -lig_trj"
     }
     if { $ligfreesel eq "" } {
-    show -err "Multi-trajectory MM/PBSA requires -lig_free"
+        show -err "Multi-trajectory MM/PBSA requires -lig_free"
     }
 
     set method "2way"
