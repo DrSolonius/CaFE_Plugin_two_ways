@@ -547,7 +547,13 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
 
     set old_nframes [molinfo $currmol get numframes]
     show -info "Loaded $old_nframes frames for complex"
+    if { $first < 0 || $first >= $old_nframes } {
+        show -err "'first' ($first) is outside complex trajectory ($old_nframes frames)"
+    }
 
+    if { $last != -1 && ($last < 0 || $last >= $old_nframes) } {
+        show -err "'last' ($last) is outside complex trajectory ($old_nframes frames)"
+    }
     # delete unnecessary frames
     if { $first > 0 } {
         animate delete end [expr $first - 1] $currmol
@@ -615,7 +621,13 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
 
     set old_lig_nframes [molinfo $ligmol get numframes]
     show -info "Loaded $old_lig_nframes frames for free ligand"
+    if { $ligfirst < 0 || $ligfirst >= $old_lig_nframes } {
+        show -err "'lig_first' ($ligfirst) is outside free ligand trajectory ($old_lig_nframes frames)"
+    }
 
+    if { $liglast != -1 && ($liglast < 0 || $liglast >= $old_lig_nframes) } {
+        show -err "'lig_last' ($liglast) is outside free ligand trajectory ($old_lig_nframes frames)"
+    }
     # delete unnecessary free ligand frames
     if { $ligfirst > 0 } {
         animate delete end [expr $ligfirst - 1] $ligmol
