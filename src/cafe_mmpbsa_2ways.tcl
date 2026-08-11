@@ -926,7 +926,6 @@ proc ::cafe::mmpbsa_2ways::run_namd { molid prefix selstr trajname topname topfm
 # revised from namdenergy1.4
 proc ::cafe::mmpbsa_2ways::write_namd_conf { molid prefix selstr trajname topname topfmt } {
     variable parfile
-    variable parfile
     variable mm_diel
     variable gb
     variable gb_exdi
