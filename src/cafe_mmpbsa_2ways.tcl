@@ -904,6 +904,23 @@ proc ::cafe::mmpbsa_2ways::write_out { fp title end ele_list vdw_list pb_list sa
     write_item $fp "Total:" $tot_list
     puts $fp $end
 }
+proc ::cafe::mmpbsa_2ways::write_delta_item_2ways { fp name cr_list lig_list } {
+
+    set fmt "   %-6s %15s %15.4f %15.4f"
+
+    foreach { cr_mean cr_sd } [calc_stats $cr_list] { break }
+    foreach { lig_mean lig_sd } [calc_stats $lig_list] { break }
+
+    set delta_mean [expr {$cr_mean - $lig_mean}]
+
+    set delta_sd [expr {
+        sqrt($cr_sd*$cr_sd + $lig_sd*$lig_sd)
+    }]
+
+    set nframes "[llength $cr_list]/[llength $lig_list]"
+
+    puts $fp [format $fmt $name $nframes $delta_mean $delta_sd]
+}
 
 # ######################################################################
 #                            MM related
