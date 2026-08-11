@@ -136,7 +136,7 @@ proc ::cafe::mmpbsa_2ways::print_usage { } {
 
 proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     variable validargs
-
+    variable method
     variable topfile
     variable trjfile
     variable ligtopfile
@@ -276,7 +276,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
         show -err "Need a calculation type!"
     }
     if { $ligtopfile eq "" } {
-    show -err "Multi-trajectory MM/PBSA requires -lig_top"
+        show -err "Multi-trajectory MM/PBSA requires -lig_top"
     }
 
     if { [llength $ligtrjfile] == 0 } {
