@@ -13,7 +13,9 @@ namespace eval ::cafe::mmpbsa_2ways:: {
     variable j2cal 0.239
 
     variable validargs {
-    -top -trj -top_type -trj_type -lig_top -lig_trj -par -out -debug -first -last -stride
+    -top -trj -top_type -trj_type
+    -lig_top -lig_trj -lig_first -lig_last -lig_stride
+    -par -out -debug -first -last -stride
     -com -rec -lig -mm -mm_exe -mm_diel -pb -pb_exe -pb_siz -pb_crg -pb_rad
     -pb_indi -pb_exdi -pb_scale -pb_perfil -pb_prbrad -pb_linit -pb_maxc
     -pb_bndcon -pb_bcfl -pb_chgm -pb_srfm -pb_swin -pb_sdens -gb
