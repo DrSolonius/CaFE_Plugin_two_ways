@@ -147,9 +147,6 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     variable trjfile
     variable ligtopfile
     variable ligtrjfile
-    variable toptype
-    variable ligtopfile
-    variable ligtrjfile
     variable ligfirst
     variable liglast
     variable ligstride
