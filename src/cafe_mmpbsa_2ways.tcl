@@ -568,6 +568,69 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
 
     mol addfile $com_trj type dcd waitfor all
     show -info "Loaded [molinfo $currmol get numframes] frames for complex"
+    
+    # ***************************************************************
+    # ************** Prepare independent free ligand ****************
+    # ***************************************************************
+
+    if { $ligtoptype eq "auto" } {
+        set ligmol [mol new $ligtopfile waitfor all]
+    } else {
+        set ligmol [mol new $ligtopfile type $ligtoptype waitfor all]
+    }
+
+    set ligtoptype [molinfo $ligmol get filetype]
+
+    # check free ligand topology type
+    if { $ligtoptype ne "psf" && $ligtoptype ne "parm" && $ligtoptype ne "parm7" } {
+        show -err "Currently only AMBER- and CHARMM/X-PLOR-formatted free ligand topology files are supported"
+    }
+
+    # check free ligand frame range
+    if { $liglast != -1 && $liglast < $ligfirst } {
+        show -err "'lig_last' should be not less than 'lig_first'"
+    }
+
+    # load independent free ligand trajectory
+    foreach f $ligtrjfile {
+        if { $ligtrjtype eq "auto" } {
+            mol addfile $f waitfor all $ligmol
+        } else {
+            mol addfile $f type $ligtrjtype waitfor all $ligmol
+        }
+    }
+
+    set old_lig_nframes [molinfo $ligmol get numframes]
+    show -info "Loaded $old_lig_nframes frames for free ligand"
+
+    # delete unnecessary free ligand frames
+    if { $ligfirst > 0 } {
+        animate delete end [expr $ligfirst - 1] $ligmol
+    }
+
+    if { $liglast != -1 && $liglast < [expr $old_lig_nframes - 1] } {
+        animate delete beg [expr $liglast - $ligfirst + 1] $ligmol
+    }
+
+    show -info "Generating new trajectory for free ligand"
+
+    set lig_trj "_mmpbsa_lig_tmp.dcd"
+
+    animate write dcd $lig_trj waitfor all skip $ligstride $ligmol
+
+    # reload reduced free ligand trajectory to save memory
+    mol delete $ligmol
+
+    set ligmol [mol new $ligtopfile type $ligtoptype waitfor all]
+
+    mol addfile $lig_trj type dcd waitfor all $ligmol
+
+    show -info "Loaded [molinfo $ligmol get numframes] frames for free ligand"
+
+
+
+
+
 
     foreach { d h m s } [timer $start0] { break }
     show -info "It took $d days $h hrs $m min $s sec"
