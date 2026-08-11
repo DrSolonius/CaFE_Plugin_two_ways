@@ -665,8 +665,10 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
             foreach { rec_ele_list rec_vdw_list } $rec_mm_result { break }
         }
 
-        if { $ligsel ne "" } {
-            set lig_mm_result [calc_mm $currmol lig $ligsel $com_trj $topfile $toptype $first $stride]
+        if { $ligfreesel ne "" } {
+            set lig_mm_result [calc_mm $ligmol lig $ligfreesel $lig_trj \
+                $ligtopfile $ligtoptype $ligfirst $ligstride]
+
             foreach { lig_ele_list lig_vdw_list } $lig_mm_result { break }
         }
 
