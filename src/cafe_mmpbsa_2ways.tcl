@@ -14,7 +14,7 @@ namespace eval ::cafe::mmpbsa_2ways:: {
 
     variable validargs {
     -top -trj -top_type -trj_type
-    -lig_top -lig_trj -lig_first -lig_last -lig_stride
+    -lig_top -lig_trj -lig_top_type -lig_trj_type -lig_first -lig_last -lig_stride
     -par -out -debug -first -last -stride
     -com -rec -lig -mm -mm_exe -mm_diel -pb -pb_exe -pb_siz -pb_crg -pb_rad
     -pb_indi -pb_exdi -pb_scale -pb_perfil -pb_prbrad -pb_linit -pb_maxc
@@ -30,6 +30,8 @@ namespace eval ::cafe::mmpbsa_2ways:: {
     # Independent free-ligand simulation for two-trajectory MM/PBSA
     variable ligtopfile ""
     variable ligtrjfile { }
+    variable ligtoptype "auto"
+    variable ligtrjtype "auto"
     variable ligfirst 0
     variable liglast -1
     variable ligstride 1
@@ -151,6 +153,8 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     variable trjfile
     variable ligtopfile
     variable ligtrjfile
+    variable ligtoptype
+    variable ligtrjtype
     variable ligfirst
     variable liglast
     variable ligstride
@@ -233,6 +237,13 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
                 }
                 -lig_trj {
                     lappend ligtrjfile [check_file $val "lig_trj"]
+
+                -lig_top_type {
+                    set ligtoptype [check_string $val "lig_top_type"]
+                }
+                -lig_trj_type {
+                    set ligtrjtype [check_string $val "lig_trj_type"]
+                }
                 }    
                 -lig_first {
                     set ligfirst [check_int $val "lig_first"]
