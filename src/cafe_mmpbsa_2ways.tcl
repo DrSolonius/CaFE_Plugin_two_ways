@@ -710,7 +710,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
         }
 
         if { $ligsel ne "" } {
-            set lig_pb_list [calc_pb $currmol lig $ligsel $first $stride]
+            set lig_pb_list [calc_pb $ligmol lig $ligfreesel $ligfirst $ligstride]
         }
 
         foreach { d h m s } [timer $start] { break }
