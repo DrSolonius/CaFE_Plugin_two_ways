@@ -1308,16 +1308,50 @@ proc ::cafe::mmpbsa::calc_pb { molid prefix selstr } {
     variable stride
     variable debug
 
-    if { $pb == 1 } {
+    # ------------------------------------------------------------
+    # Check whether all atomic charges in the selected component
+    # are zero. We use sum(abs(q)), not the net charge, because a
+    # molecule can have net charge 0 but still contain partial charges.
+    # ------------------------------------------------------------
+    set qsel [atomselect $molid $selstr]
+    set qabs 0.0
+
+    foreach q [$qsel get charge] {
+        set qabs [expr {$qabs + abs($q)}]
+    }
+
+    $qsel delete
+
+    # ------------------------------------------------------------
+    # If every atomic charge is zero, the PB electrostatic term is
+    # zero. Do not call APBS/DelPhi because the source term is null.
+    # ------------------------------------------------------------
+    if { $qabs < 1.0e-8 } {
+
+        set nframes [molinfo $molid get numframes]
+        set pb_list [lrepeat $nframes 0.0]
+        set conv 1.0
+
+        show -info "All atomic charges are zero for $prefix; PB energy set to 0.0"
+
+    } elseif { $pb == 1 } {
+
         set pb_list [run_delphi $molid $prefix $selstr]
         set conv $kt2kc
+
     } elseif { $pb == 2 } {
+
         set pb_list [run_apbs $molid $prefix $selstr]
         set conv $j2cal
+
     } else {
+
         show -err "Unknown PB type"
     }
 
+    # ------------------------------------------------------------
+    # Debug output
+    # ------------------------------------------------------------
     if { $debug > 0 } {
         set tfmt "#%14s %15s"
         set dfmt "%15d %15.4f"
@@ -1326,7 +1360,7 @@ proc ::cafe::mmpbsa::calc_pb { molid prefix selstr } {
         set frames { }
 
         for { set i 0 } { $i < [llength $pb_list] } { incr i } {
-            lappend frames [expr $first + $i*$stride]
+            lappend frames [expr {$first + $i*$stride}]
         }
 
         set data { }
@@ -1336,6 +1370,7 @@ proc ::cafe::mmpbsa::calc_pb { molid prefix selstr } {
         write_log $fname $title $dfmt $data
     }
 
+    # Convert PB energies to kcal/mol
     set pb_list [vecscale $conv $pb_list]
 
     return $pb_list
