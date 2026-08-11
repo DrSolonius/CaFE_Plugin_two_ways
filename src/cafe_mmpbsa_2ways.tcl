@@ -971,6 +971,97 @@ proc ::cafe::mmpbsa_2ways::calc_mm { molid prefix selstr trajname topname topfmt
 
     return [list $ele_list $vdw_list]
 }
+proc ::cafe::mmpbsa_2ways::write_delta_2ways {
+    fp title end
+    com_ele_list com_vdw_list com_pb_list com_sa_list
+    rec_ele_list rec_vdw_list rec_pb_list rec_sa_list
+    lig_ele_list lig_vdw_list lig_pb_list lig_sa_list
+} {
+    variable mm
+    variable pb
+    variable sa
+
+    puts $fp $title
+
+    # Bound paired differences: Complex - Receptor
+    if { $mm } {
+        set cr_ele_list [vecsub $com_ele_list $rec_ele_list]
+        set cr_vdw_list [vecsub $com_vdw_list $rec_vdw_list]
+
+        write_delta_item_2ways $fp "Elec:" $cr_ele_list $lig_ele_list
+        write_delta_item_2ways $fp "Vdw:"  $cr_vdw_list $lig_vdw_list
+    }
+
+    if { $pb } {
+        set cr_pb_list [vecsub $com_pb_list $rec_pb_list]
+        write_delta_item_2ways $fp "PB:" $cr_pb_list $lig_pb_list
+    }
+
+    if { $sa } {
+        set cr_sa_list [vecsub $com_sa_list $rec_sa_list]
+        write_delta_item_2ways $fp "SA:" $cr_sa_list $lig_sa_list
+    }
+
+    if { $mm } {
+        set cr_gas_list [vecadd $cr_ele_list $cr_vdw_list]
+        set lig_gas_list [vecadd $lig_ele_list $lig_vdw_list]
+
+        write_delta_item_2ways $fp "Gas:" $cr_gas_list $lig_gas_list
+    }
+
+    if { $pb && $sa } {
+        set cr_sol_list [vecadd $cr_pb_list $cr_sa_list]
+        set lig_sol_list [vecadd $lig_pb_list $lig_sa_list]
+
+        write_delta_item_2ways $fp "Sol:" $cr_sol_list $lig_sol_list
+    }
+
+    if { $mm && $pb } {
+        set cr_pol_list [vecadd $cr_ele_list $cr_pb_list]
+        set lig_pol_list [vecadd $lig_ele_list $lig_pb_list]
+
+        write_delta_item_2ways $fp "Pol:" $cr_pol_list $lig_pol_list
+    }
+
+    if { $mm && $sa } {
+        set cr_npol_list [vecadd $cr_vdw_list $cr_sa_list]
+        set lig_npol_list [vecadd $lig_vdw_list $lig_sa_list]
+
+        write_delta_item_2ways $fp "Npol:" $cr_npol_list $lig_npol_list
+    }
+
+    set cr_tot_list { }
+    set lig_tot_list { }
+
+    if { $mm } {
+        set cr_tot_list $cr_gas_list
+        set lig_tot_list $lig_gas_list
+    }
+
+    if { $pb } {
+        if { ![llength $cr_tot_list] } {
+            set cr_tot_list $cr_pb_list
+            set lig_tot_list $lig_pb_list
+        } else {
+            set cr_tot_list [vecadd $cr_tot_list $cr_pb_list]
+            set lig_tot_list [vecadd $lig_tot_list $lig_pb_list]
+        }
+    }
+
+    if { $sa } {
+        if { ![llength $cr_tot_list] } {
+            set cr_tot_list $cr_sa_list
+            set lig_tot_list $lig_sa_list
+        } else {
+            set cr_tot_list [vecadd $cr_tot_list $cr_sa_list]
+            set lig_tot_list [vecadd $lig_tot_list $lig_sa_list]
+        }
+    }
+
+    write_delta_item_2ways $fp "Total:" $cr_tot_list $lig_tot_list
+
+    puts $fp $end
+}
 
 # calculate MM and/or GB by NAMD
 proc ::cafe::mmpbsa_2ways::run_namd { molid prefix selstr trajname topname topfmt } {
