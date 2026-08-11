@@ -99,6 +99,8 @@ proc ::cafe::mmpbsa_2ways::print_usage { } {
     show -info "  -lig_first <first free ligand frame> -- default: 0"
     show -info "  -lig_last <last free ligand frame>   -- default: -1"
     show -info "  -lig_stride <free ligand stride>     -- default: 1"
+    show -info "  -lig_top_type <free ligand topology filetype>    -- default: auto"
+    show -info "  -lig_trj_type <free ligand trajectory filetype> -- default: auto"
     show -info "  -top_type <topology filetype>        -- default: auto"
     show -info "  -trj_type <trajectory filetype>  -- default: auto"
     show -info "  -par <force field parameters>    -- default: [file join $::env(CAFEDIR) par_all22_prot.inp]"
