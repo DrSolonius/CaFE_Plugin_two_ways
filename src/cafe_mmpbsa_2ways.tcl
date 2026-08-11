@@ -88,12 +88,13 @@ namespace eval ::cafe::mmpbsa_2ways:: {
 
 # print usage info
 proc ::cafe::mmpbsa_2ways::print_usage { } {
-    show -info "Usage: mmpbsa -top filename -trj filename \[-args...\]"
+    show -info "Usage: mmpbsa_2ways -top filename -trj filename \[-args...\]"
     show -info "Mandatory arguments:"
     show -info "  -top <complex topology filename>"
     show -info "  -trj <complex trajectory filename>"
     show -info "  -lig_top <free ligand topology filename>"
     show -info "  -lig_trj <free ligand trajectory filename>"
+    show -info "  -lig_free <free ligand selection>"
 
     show -info "Optional arguments:"
     show -info "  -lig_first <first free ligand frame> -- default: 0"
@@ -112,7 +113,6 @@ proc ::cafe::mmpbsa_2ways::print_usage { } {
     show -info "  -com <complex selection>         -- default: \"\""
     show -info "  -rec <receptor selection>        -- default: \"\""
     show -info "  -lig <ligand selection>          -- default: \"\""
-    show -info "  -lig_free <free ligand selection> -- default: \"\""
     show -info "  -mm <do gas-phase calculation>   -- default: 0"
     show -info "  -mm_exe <path to NAMD>           -- default: \"namd2\""
     show -info "  -mm_diel <dielectric constant>   -- default: 1.0"
@@ -831,13 +831,13 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     close $result
 
     if { $debug < 2 } {
-    if { [file exists $com_trj] } {
-        file delete $com_trj
-    }
+        if { [file exists $com_trj] } {
+            file delete $com_trj
+        }
 
-    if { [file exists $lig_trj] } {
-        file delete $lig_trj
-    }
+        if { [file exists $lig_trj] } {
+            file delete $lig_trj
+        }
     }
 
     foreach { d h m s } [timer $start] { break }
