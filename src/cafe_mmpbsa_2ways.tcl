@@ -188,7 +188,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     variable sa_beta
     variable sa_prbrad
     variable sa_samples
-
+    variable method ""
     # *********************************************************
     # **************** Do the Preparation Work ****************
     # *********************************************************
@@ -274,6 +274,15 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     if { !$mm && !$pb && !$gb && !$sa } {
         show -err "Need a calculation type!"
     }
+    if { $ligtopfile eq "" } {
+    show -err "Multi-trajectory MM/PBSA requires -lig_top"
+    }
+
+    if { [llength $ligtrjfile] == 0 } {
+        show -err "Multi-trajectory MM/PBSA requires -lig_trj"
+    }
+
+    set method "2way"
 
     if { $mm } {
         foreach { key val } $args {
