@@ -14,7 +14,7 @@ namespace eval ::cafe::mmpbsa_2ways:: {
 
     variable validargs {
     -top -trj -top_type -trj_type
-    -lig_top -lig_trj -lig_top_type -lig_trj_type -lig_first -lig_last -lig_stride
+    -lig_top -lig_trj -lig_top_type -lig_trj_type -lig_first -lig_last -lig_stride -lig_free
     -par -out -debug -first -last -stride
     -com -rec -lig -mm -mm_exe -mm_diel -pb -pb_exe -pb_siz -pb_crg -pb_rad
     -pb_indi -pb_exdi -pb_scale -pb_perfil -pb_prbrad -pb_linit -pb_maxc
@@ -47,7 +47,7 @@ namespace eval ::cafe::mmpbsa_2ways:: {
     variable comsel ""
     variable recsel ""
     variable ligsel ""
-
+    variable ligfreesel ""
     variable mm 0
     variable mm_exe "namd2"
     variable mm_diel 1.0
@@ -112,6 +112,7 @@ proc ::cafe::mmpbsa_2ways::print_usage { } {
     show -info "  -com <complex selection>         -- default: \"\""
     show -info "  -rec <receptor selection>        -- default: \"\""
     show -info "  -lig <ligand selection>          -- default: \"\""
+    show -info "  -lig_free <free ligand selection> -- default: \"\""
     show -info "  -mm <do gas-phase calculation>   -- default: 0"
     show -info "  -mm_exe <path to NAMD>           -- default: \"namd2\""
     show -info "  -mm_diel <dielectric constant>   -- default: 1.0"
@@ -171,7 +172,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     variable comsel
     variable recsel
     variable ligsel
-
+    variable ligfreesel
     variable mm
     variable mm_exe
     variable mm_diel
@@ -282,6 +283,9 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
                 -lig {
                     set ligsel $val
                 }
+                -lig_free {
+                    set ligfreesel $val
+                }
                 -mm {
                     set mm [check_bool $val "mm"]
                 }
@@ -314,6 +318,9 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
 
     if { [llength $ligtrjfile] == 0 } {
         show -err "Multi-trajectory MM/PBSA requires -lig_trj"
+    }
+    if { $ligfreesel eq "" } {
+    show -err "Multi-trajectory MM/PBSA requires -lig_free"
     }
 
     set method "2way"
