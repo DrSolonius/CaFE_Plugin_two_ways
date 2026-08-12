@@ -792,7 +792,9 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
         foreach { com_ele_list com_vdw_list } $com_mm_result { break }
 
         if { $recsel ne "" } {
-            set rec_mm_result [calc_mm $currmol rec $recsel $com_trj $topfile $toptype $first $stride]
+            set rec_mm_result [calc_mm $recmol rec $recsel $rec_trj \
+            $rectopfile $rectoptype $recfirst $recstride]
+
             foreach { rec_ele_list rec_vdw_list } $rec_mm_result { break }
         }
 
