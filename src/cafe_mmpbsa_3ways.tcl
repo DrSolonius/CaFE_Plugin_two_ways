@@ -1,6 +1,6 @@
-package provide cafe_mmpbsa_2ways 1.0
+package provide cafe_mmpbsa_3ways 1.0
 
-namespace eval ::cafe::mmpbsa_2ways:: {
+namespace eval ::cafe::mmpbsa_3ways:: {
     package require readcharmmpar ;# for ::Pararead::getvdwparam
     package require topotools ;# for "topo guessatom"
     package require cafe_tools
@@ -86,8 +86,8 @@ namespace eval ::cafe::mmpbsa_2ways:: {
 }
 
 # print usage info
-proc ::cafe::mmpbsa_2ways::print_usage { } {
-    show -info "Usage: mmpbsa_2ways -top filename -trj filename \[-args...\]"
+proc ::cafe::mmpbsa_3ways::print_usage { } {
+    show -info "Usage: mmpbsa_3ways -top filename -trj filename \[-args...\]"
     show -info "Mandatory arguments:"
     show -info "  -top <complex topology filename>"
     show -info "  -trj <complex trajectory filename>"
@@ -147,7 +147,7 @@ proc ::cafe::mmpbsa_2ways::print_usage { } {
     show ""
 }
 
-proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
+proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
     variable validargs
     variable method
     variable topfile
@@ -853,7 +853,7 @@ proc ::cafe::mmpbsa_2ways::mmpbsa { args } {
     show -info "Total elapsed time: $d days $h hrs $m min $s sec"
 }
 
-proc ::cafe::mmpbsa_2ways::write_out { fp title end ele_list vdw_list pb_list sa_list } {
+proc ::cafe::mmpbsa_3ways::write_out { fp title end ele_list vdw_list pb_list sa_list } {
     variable mm
     variable pb
     variable sa
@@ -914,7 +914,7 @@ proc ::cafe::mmpbsa_2ways::write_out { fp title end ele_list vdw_list pb_list sa
     write_item $fp "Total:" $tot_list
     puts $fp $end
 }
-proc ::cafe::mmpbsa_2ways::write_delta_item_2ways { fp name cr_list lig_list } {
+proc ::cafe::mmpbsa_3ways::write_delta_item_2ways { fp name cr_list lig_list } {
 
     set fmt "   %-6s %15s %15.4f %15.4f"
 
@@ -935,7 +935,7 @@ proc ::cafe::mmpbsa_2ways::write_delta_item_2ways { fp name cr_list lig_list } {
 # ######################################################################
 #                            MM related
 # ######################################################################
-proc ::cafe::mmpbsa_2ways::calc_mm { molid prefix selstr trajname topname topfmt framefirst framestride } {
+proc ::cafe::mmpbsa_3ways::calc_mm { molid prefix selstr trajname topname topfmt framefirst framestride } {
     variable debug
 
     # NOTE: There is a bug in namdEnergy plugin 1.4. It was said that "skip" was
@@ -981,7 +981,7 @@ proc ::cafe::mmpbsa_2ways::calc_mm { molid prefix selstr trajname topname topfmt
 
     return [list $ele_list $vdw_list]
 }
-proc ::cafe::mmpbsa_2ways::write_delta_2ways {
+proc ::cafe::mmpbsa_3ways::write_delta_2ways {
     fp title end
     com_ele_list com_vdw_list com_pb_list com_sa_list
     rec_ele_list rec_vdw_list rec_pb_list rec_sa_list
@@ -1074,7 +1074,7 @@ proc ::cafe::mmpbsa_2ways::write_delta_2ways {
 }
 
 # calculate MM and/or GB by NAMD
-proc ::cafe::mmpbsa_2ways::run_namd { molid prefix selstr trajname topname topfmt } {
+proc ::cafe::mmpbsa_3ways::run_namd { molid prefix selstr trajname topname topfmt } {
     variable mm_exe
     variable debug
 
@@ -1087,7 +1087,7 @@ proc ::cafe::mmpbsa_2ways::run_namd { molid prefix selstr trajname topname topfm
 
 # write a NAMD configuration file
 # revised from namdenergy1.4
-proc ::cafe::mmpbsa_2ways::write_namd_conf { molid prefix selstr trajname topname topfmt } {
+proc ::cafe::mmpbsa_3ways::write_namd_conf { molid prefix selstr trajname topname topfmt } {
     variable parfile
     variable mm_diel
     variable gb
@@ -1184,7 +1184,7 @@ proc ::cafe::mmpbsa_2ways::write_namd_conf { molid prefix selstr trajname topnam
 # ######################################################################
 #                              PB related
 # ######################################################################
-proc ::cafe::mmpbsa_2ways::assign_radii { molid type args } {
+proc ::cafe::mmpbsa_3ways::assign_radii { molid type args } {
     switch $type {
         bondi     { assign_radii_bondi $molid }
         rowland   { assign_radii_rowland $molid }
@@ -1203,7 +1203,7 @@ proc ::cafe::mmpbsa_2ways::assign_radii { molid type args } {
 # **************** General ****************
 
 # assign Bondi radii (J Phys Chem 1964, 68, 441-452)
-proc ::cafe::mmpbsa_2ways::assign_radii_bondi { molid } {
+proc ::cafe::mmpbsa_3ways::assign_radii_bondi { molid } {
     # element guessed from mass should be more accurate; however,
     # there is a bug in topotools1.5 plugin, line 43:
     # "$s set element [lindex $elements [ptefrommass $idx]]"
@@ -1216,7 +1216,7 @@ proc ::cafe::mmpbsa_2ways::assign_radii_bondi { molid } {
 }
 
 # Rowland and Taylor (J Phys Chem 1996, 100, 7384-7391)
-proc ::cafe::mmpbsa_2ways::assign_radii_rowland { molid } {
+proc ::cafe::mmpbsa_3ways::assign_radii_rowland { molid } {
     assign_radii_bondi $molid
 
     [atomselect $molid "element 'H'"] set radius 1.10
@@ -1232,7 +1232,7 @@ proc ::cafe::mmpbsa_2ways::assign_radii_rowland { molid } {
 
 # assign PARSE radii (J Phys Chem 1994, 98, 1978-1988)
 # atoms not specified here will use default values in VMD
-proc ::cafe::mmpbsa_2ways::assign_radii_parse { molid { opt "-mod" } } {
+proc ::cafe::mmpbsa_3ways::assign_radii_parse { molid { opt "-mod" } } {
     # unknown atoms were set to 1.5 in AMBER; however, I set them
     # according to either Pauling or the value guessed by VMD
     #[atomselect $molid "all"] set radius 1.50
@@ -1287,7 +1287,7 @@ proc ::cafe::mmpbsa_2ways::assign_radii_parse { molid { opt "-mod" } } {
 # **************** For CHARMM ****************
 
 # assign CHARMM radii based on CHARMM force field parameters
-proc ::cafe::mmpbsa_2ways::assign_radii_charmm { molid args } {
+proc ::cafe::mmpbsa_3ways::assign_radii_charmm { molid args } {
     set paramlist { }
 
     foreach f $args {
@@ -1318,7 +1318,7 @@ proc ::cafe::mmpbsa_2ways::assign_radii_charmm { molid args } {
 
 # assign modified CHARMM radii developed by Roux and coworkers
 # (J Phys Chem B 1997, 101, 5239-5248 & J Phys Chem B 2002, 106, 11026-11035)
-proc ::cafe::mmpbsa_2ways::assign_radii_roux { molid } {
+proc ::cafe::mmpbsa_3ways::assign_radii_roux { molid } {
     # **************** General ****************
     assign_radii_bondi $molid
 
@@ -1489,14 +1489,14 @@ proc ::cafe::mmpbsa_2ways::assign_radii_roux { molid } {
 # **************** For AMBER ****************
 
 # assign radii based on a given AMBER PARM7 file
-proc ::cafe::mmpbsa_2ways::assign_radii_parm7 { molid args } {
+proc ::cafe::mmpbsa_3ways::assign_radii_parm7 { molid args } {
     set rs [parse_parm7 $args]
     [atomselect $molid "all"] set radius $rs
 }
 
 # unfortunately, VMD discards the radii info in a PARM7 file,
 # so I have to re-parse it myself.
-proc ::cafe::mmpbsa_2ways::parse_parm7 { fname } {
+proc ::cafe::mmpbsa_3ways::parse_parm7 { fname } {
     if { [catch {set fp [open $fname r]} err] } {
         show -err "Failed to open PARM7 file: $fname"
     }
@@ -1562,21 +1562,21 @@ proc ::cafe::mmpbsa_2ways::parse_parm7 { fname } {
 }
 
 # Swanson et al (J Chem Theory Comput 2007, 3, 170-183)
-proc ::cafe::mmpbsa_2ways::assign_radii_swanson { molid } {
+proc ::cafe::mmpbsa_3ways::assign_radii_swanson { molid } {
     show -err "Not implemented yet"
 }
 
 # Tan et al (J Phys Chem B 2006, 110, 18680-18687)
-proc ::cafe::mmpbsa_2ways::assign_radii_tan { molid } {
+proc ::cafe::mmpbsa_3ways::assign_radii_tan { molid } {
     show -err "Not implemented yet"
 }
 
 # Yamagishi et al (J Comput Chem 2014, 35, 2132-2139)
-proc ::cafe::mmpbsa_2ways::assign_radii_yamagishi { molid } {
+proc ::cafe::mmpbsa_3ways::assign_radii_yamagishi { molid } {
     show -err "Not implemented yet"
 }
 
-proc ::cafe::mmpbsa_2ways::calc_pb { molid prefix selstr framefirst framestride } {
+proc ::cafe::mmpbsa_3ways::calc_pb { molid prefix selstr framefirst framestride } {
     variable pb
     variable kt2kc
     variable j2cal
@@ -1636,7 +1636,7 @@ proc ::cafe::mmpbsa_2ways::calc_pb { molid prefix selstr framefirst framestride 
 }
 
 # solve PBE by DelPhi
-proc ::cafe::mmpbsa_2ways::run_delphi { molid prefix selstr framefirst framestride } {
+proc ::cafe::mmpbsa_3ways::run_delphi { molid prefix selstr framefirst framestride } {
     variable pb_exe
     variable pb_siz
     variable pb_crg
@@ -1719,7 +1719,7 @@ proc ::cafe::mmpbsa_2ways::run_delphi { molid prefix selstr framefirst framestri
 
 # generate a PQR file for DelPhi calculation
 # DelPhi cannot read the PQR written by "animate write pqr"
-proc ::cafe::mmpbsa_2ways::write_pqr { sel fname } {
+proc ::cafe::mmpbsa_3ways::write_pqr { sel fname } {
     set fp [open $fname w]
     foreach n [$sel get serial] name [$sel get name] \
             rname [$sel get resname] rid [$sel get resid] \
@@ -1733,7 +1733,7 @@ proc ::cafe::mmpbsa_2ways::write_pqr { sel fname } {
 }
 
 # generate a ligand size file for DelPhi calculation
-proc ::cafe::mmpbsa_2ways::write_siz { molid rname fname } {
+proc ::cafe::mmpbsa_3ways::write_siz { molid rname fname } {
     set fp [open $fname w]
     puts $fp atom__res_radius_
 
@@ -1749,7 +1749,7 @@ proc ::cafe::mmpbsa_2ways::write_siz { molid rname fname } {
 }
 
 # generate a ligand charge file for DelPhi calculation
-proc ::cafe::mmpbsa_2ways::write_crg { molid rname fname } {
+proc ::cafe::mmpbsa_3ways::write_crg { molid rname fname } {
     set fp [open $fname w]
     puts $fp atom__resnumbc_charge_
 
@@ -1765,7 +1765,7 @@ proc ::cafe::mmpbsa_2ways::write_crg { molid rname fname } {
 }
 
 # parse a DelPhi output file
-proc ::cafe::mmpbsa_2ways::parse_delphi { fname } {
+proc ::cafe::mmpbsa_3ways::parse_delphi { fname } {
     if { [catch { set fp [open $fname r] } err] } {
         show -err "Failed to open DelPhi output file: $fname"
     }
@@ -1790,7 +1790,7 @@ proc ::cafe::mmpbsa_2ways::parse_delphi { fname } {
 }
 
 # solve PBE by APBS
-proc ::cafe::mmpbsa_2ways::run_apbs { molid prefix selstr framefirst framestride } {
+proc ::cafe::mmpbsa_3ways::run_apbs { molid prefix selstr framefirst framestride } {
     variable pb_exe
     variable pb_indi
     variable pb_exdi
@@ -1920,7 +1920,7 @@ proc ::cafe::mmpbsa_2ways::run_apbs { molid prefix selstr framefirst framestride
     return $pb_list
 }
 
-proc ::cafe::mmpbsa_2ways::minmax { x r } {
+proc ::cafe::mmpbsa_3ways::minmax { x r } {
     set xmin 9999
     set xmax -9999
 
@@ -1936,7 +1936,7 @@ proc ::cafe::mmpbsa_2ways::minmax { x r } {
 }
 
 # parse an APBS output file
-proc ::cafe::mmpbsa_2ways::parse_apbs { fname opt } {
+proc ::cafe::mmpbsa_3ways::parse_apbs { fname opt } {
     if { [catch { set fp [open $fname r] } err] } {
         show -err "Failed to open APBS output file: $fname"
     }
@@ -1977,7 +1977,7 @@ proc ::cafe::mmpbsa_2ways::parse_apbs { fname opt } {
 # ######################################################################
 #                             SA related
 # ######################################################################
-proc ::cafe::mmpbsa_2ways::calc_sa { molid prefix selstr framefirst framestride } {
+proc ::cafe::mmpbsa_3ways::calc_sa { molid prefix selstr framefirst framestride } {
     variable sa
     variable sa_prbrad
     variable sa_samples
@@ -2019,7 +2019,7 @@ proc ::cafe::mmpbsa_2ways::calc_sa { molid prefix selstr framefirst framestride 
 }
 
 # calculate SASA by VMD
-proc ::cafe::mmpbsa_2ways::run_vmd { molid prefix selstr } {
+proc ::cafe::mmpbsa_3ways::run_vmd { molid prefix selstr } {
     variable stride
     variable sa_prbrad
     variable sa_samples
@@ -2043,7 +2043,7 @@ proc ::cafe::mmpbsa_2ways::run_vmd { molid prefix selstr } {
 }
 
 # calculate SASA/SAV/WCA by APBS
-proc ::cafe::mmpbsa_2ways::run_apbs_apol { molid prefix selstr framefirst framestride } {
+proc ::cafe::mmpbsa_3ways::run_apbs_apol { molid prefix selstr framefirst framestride } {
     variable sa_exe
     variable sa_prbrad
     variable sa_samples
