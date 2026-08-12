@@ -1152,82 +1152,102 @@ proc ::cafe::mmpbsa_3ways::write_delta_3ways {
 
     puts $fp $title
 
-    # Bound paired differences: Complex - Receptor
+    # Individual energy components
     if { $mm } {
-        set cr_ele_list [vecsub $com_ele_list $rec_ele_list]
-        set cr_vdw_list [vecsub $com_vdw_list $rec_vdw_list]
+        write_delta_item_3ways $fp "Elec:" \
+            $com_ele_list $rec_ele_list $lig_ele_list
 
-        write_delta_item_3ways $fp "Elec:" $cr_ele_list $lig_ele_list
-        write_delta_item_3ways $fp "Vdw:"  $cr_vdw_list $lig_vdw_list
+        write_delta_item_3ways $fp "Vdw:" \
+            $com_vdw_list $rec_vdw_list $lig_vdw_list
     }
 
     if { $pb } {
-        set cr_pb_list [vecsub $com_pb_list $rec_pb_list]
-        write_delta_item_3ways $fp "PB:" $cr_pb_list $lig_pb_list
+        write_delta_item_3ways $fp "PB:" \
+            $com_pb_list $rec_pb_list $lig_pb_list
     }
 
     if { $sa } {
-        set cr_sa_list [vecsub $com_sa_list $rec_sa_list]
-        write_delta_item_3ways $fp "SA:" $cr_sa_list $lig_sa_list
+        write_delta_item_3ways $fp "SA:" \
+            $com_sa_list $rec_sa_list $lig_sa_list
     }
 
+    # Gas = Elec + Vdw
     if { $mm } {
-        set cr_gas_list [vecadd $cr_ele_list $cr_vdw_list]
+        set com_gas_list [vecadd $com_ele_list $com_vdw_list]
+        set rec_gas_list [vecadd $rec_ele_list $rec_vdw_list]
         set lig_gas_list [vecadd $lig_ele_list $lig_vdw_list]
 
-        write_delta_item_3ways $fp "Gas:" $cr_gas_list $lig_gas_list
+        write_delta_item_3ways $fp "Gas:" \
+            $com_gas_list $rec_gas_list $lig_gas_list
     }
 
+    # Sol = PB + SA
     if { $pb && $sa } {
-        set cr_sol_list [vecadd $cr_pb_list $cr_sa_list]
+        set com_sol_list [vecadd $com_pb_list $com_sa_list]
+        set rec_sol_list [vecadd $rec_pb_list $rec_sa_list]
         set lig_sol_list [vecadd $lig_pb_list $lig_sa_list]
 
-        write_delta_item_3ways $fp "Sol:" $cr_sol_list $lig_sol_list
+        write_delta_item_3ways $fp "Sol:" \
+            $com_sol_list $rec_sol_list $lig_sol_list
     }
 
+    # Pol = Elec + PB
     if { $mm && $pb } {
-        set cr_pol_list [vecadd $cr_ele_list $cr_pb_list]
+        set com_pol_list [vecadd $com_ele_list $com_pb_list]
+        set rec_pol_list [vecadd $rec_ele_list $rec_pb_list]
         set lig_pol_list [vecadd $lig_ele_list $lig_pb_list]
 
-        write_delta_item_3ways $fp "Pol:" $cr_pol_list $lig_pol_list
+        write_delta_item_3ways $fp "Pol:" \
+            $com_pol_list $rec_pol_list $lig_pol_list
     }
 
+    # Npol = Vdw + SA
     if { $mm && $sa } {
-        set cr_npol_list [vecadd $cr_vdw_list $cr_sa_list]
+        set com_npol_list [vecadd $com_vdw_list $com_sa_list]
+        set rec_npol_list [vecadd $rec_vdw_list $rec_sa_list]
         set lig_npol_list [vecadd $lig_vdw_list $lig_sa_list]
 
-        write_delta_item_3ways $fp "Npol:" $cr_npol_list $lig_npol_list
+        write_delta_item_3ways $fp "Npol:" \
+            $com_npol_list $rec_npol_list $lig_npol_list
     }
 
-    set cr_tot_list { }
+    # Total energy for each independent ensemble
+    set com_tot_list { }
+    set rec_tot_list { }
     set lig_tot_list { }
 
     if { $mm } {
-        set cr_tot_list $cr_gas_list
+        set com_tot_list $com_gas_list
+        set rec_tot_list $rec_gas_list
         set lig_tot_list $lig_gas_list
     }
 
     if { $pb } {
-        if { ![llength $cr_tot_list] } {
-            set cr_tot_list $cr_pb_list
+        if { ![llength $com_tot_list] } {
+            set com_tot_list $com_pb_list
+            set rec_tot_list $rec_pb_list
             set lig_tot_list $lig_pb_list
         } else {
-            set cr_tot_list [vecadd $cr_tot_list $cr_pb_list]
+            set com_tot_list [vecadd $com_tot_list $com_pb_list]
+            set rec_tot_list [vecadd $rec_tot_list $rec_pb_list]
             set lig_tot_list [vecadd $lig_tot_list $lig_pb_list]
         }
     }
 
     if { $sa } {
-        if { ![llength $cr_tot_list] } {
-            set cr_tot_list $cr_sa_list
+        if { ![llength $com_tot_list] } {
+            set com_tot_list $com_sa_list
+            set rec_tot_list $rec_sa_list
             set lig_tot_list $lig_sa_list
         } else {
-            set cr_tot_list [vecadd $cr_tot_list $cr_sa_list]
+            set com_tot_list [vecadd $com_tot_list $com_sa_list]
+            set rec_tot_list [vecadd $rec_tot_list $rec_sa_list]
             set lig_tot_list [vecadd $lig_tot_list $lig_sa_list]
         }
     }
 
-    write_delta_item_3ways $fp "Total:" $cr_tot_list $lig_tot_list
+    write_delta_item_3ways $fp "Total:" \
+        $com_tot_list $rec_tot_list $lig_tot_list
 
     puts $fp $end
 }
