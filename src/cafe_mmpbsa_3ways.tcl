@@ -1064,20 +1064,29 @@ proc ::cafe::mmpbsa_3ways::write_out { fp title end ele_list vdw_list pb_list sa
     write_item $fp "Total:" $tot_list
     puts $fp $end
 }
-proc ::cafe::mmpbsa_3ways::write_delta_item_3ways { fp name cr_list lig_list } {
+proc ::cafe::mmpbsa_3ways::write_delta_item_3ways {
+    fp name com_list rec_list lig_list
+} {
 
     set fmt "   %-6s %15s %15.4f %15.4f"
 
-    foreach { cr_mean cr_sd } [calc_stats $cr_list] { break }
+    foreach { com_mean com_sd } [calc_stats $com_list] { break }
+    foreach { rec_mean rec_sd } [calc_stats $rec_list] { break }
     foreach { lig_mean lig_sd } [calc_stats $lig_list] { break }
 
-    set delta_mean [expr {$cr_mean - $lig_mean}]
-
-    set delta_sd [expr {
-        sqrt($cr_sd*$cr_sd + $lig_sd*$lig_sd)
+    set delta_mean [expr {
+        $com_mean - $rec_mean - $lig_mean
     }]
 
-    set nframes "[llength $cr_list]/[llength $lig_list]"
+    set delta_sd [expr {
+        sqrt(
+            $com_sd*$com_sd +
+            $rec_sd*$rec_sd +
+            $lig_sd*$lig_sd
+        )
+    }]
+
+    set nframes "[llength $com_list]/[llength $rec_list]/[llength $lig_list]"
 
     puts $fp [format $fmt $name $nframes $delta_mean $delta_sd]
 }
