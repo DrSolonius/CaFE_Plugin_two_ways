@@ -352,7 +352,17 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
     if { $ligfreesel eq "" } {
         show -err "Multi-trajectory MM/PBSA requires -lig_free"
     }
+    if { $rectopfile eq "" } {
+    show -err "Three-trajectory MM/PBSA requires -rec_top"
+    }
 
+    if { [llength $rectrjfile] == 0 } {
+        show -err "Three-trajectory MM/PBSA requires -rec_trj"
+    }
+
+    if { $recsel eq "" } {
+        show -err "Three-trajectory MM/PBSA requires -rec"
+    }
     set method "3way"
 
     if { $mm } {
