@@ -877,7 +877,18 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
             append ar_args " \"$topfile\""
         }
         eval assign_radii $ar_args
-        
+        # assign SA radii to independent free receptor
+        set rec_ar_args "$recmol $sa_rad"
+
+        if { $sa_rad eq "charmm" } {
+            foreach p $parfile {
+                append rec_ar_args " \"$p\""
+            }
+        } elseif { $sa_rad eq "parm7" } {
+            append rec_ar_args " \"$rectopfile\""
+        }
+
+        eval assign_radii $rec_ar_args
         # assign SA radii to independent free ligand
         set lig_ar_args "$ligmol $sa_rad"
 
@@ -894,7 +905,7 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
         set com_sa_list [calc_sa $currmol com $comsel $first $stride]
 
         if { $recsel ne "" } {
-            set rec_sa_list [calc_sa $currmol rec $recsel $first $stride]
+            set rec_sa_list [calc_sa $recmol rec $recsel $recfirst $recstride]
         }
 
         if { $ligfreesel ne "" } {
