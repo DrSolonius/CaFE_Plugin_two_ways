@@ -128,7 +128,6 @@ proc ::cafe::mmpbsa_3ways::print_usage { } {
     show -info "  -first <first frame>             -- default: 0"
     show -info "  -last <last frame>               -- default: -1"
     show -info "  -stride <stride>                 -- default: 1"
-    show -info "  -com <complex selection>         -- default: \"\""
     show -info "  -mm <do gas-phase calculation>   -- default: 0"
     show -info "  -mm_exe <path to NAMD>           -- default: \"namd2\""
     show -info "  -mm_diel <dielectric constant>   -- default: 1.0"
