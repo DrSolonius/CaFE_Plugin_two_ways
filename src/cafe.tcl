@@ -25,9 +25,8 @@ package provide cafe 1.0
 package require cafe_mmpbsa_2ways
 package require cafe_mmpbsa_3ways
 namespace eval ::cafe:: {
-    namespace export mmpbsa mmpbsa_2ways lie
+    namespace export mmpbsa mmpbsa_2ways mmpbsa_3ways lie
 }
-
 proc mmpbsa { args } { return [eval ::cafe::mmpbsa $args] }
 
 proc lie { args } { return [eval ::cafe::lie $args] }
@@ -42,4 +41,11 @@ proc mmpbsa_2ways { args } {
 
 proc ::cafe::mmpbsa_2ways { args } {
     return [eval ::cafe::mmpbsa_2ways::mmpbsa $args]
+}
+proc mmpbsa_3ways { args } {
+    return [eval ::cafe::mmpbsa_3ways $args]
+}
+
+proc ::cafe::mmpbsa_3ways { args } {
+    return [eval ::cafe::mmpbsa_3ways::mmpbsa $args]
 }
