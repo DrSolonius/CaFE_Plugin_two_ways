@@ -317,7 +317,7 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
         show -err "Multi-trajectory MM/PBSA requires -lig_free"
     }
 
-    set method "2way"
+    set method "3way"
 
     if { $mm } {
         foreach { key val } $args {
@@ -826,7 +826,7 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
 
     if { $comsel ne "" && $recsel ne "" && $ligfreesel ne "" } {
 
-        write_delta_2ways $result " Delta:" $sepline \
+        write_delta_3ways $result " Delta:" $sepline \
             $com_ele_list $com_vdw_list $com_pb_list $com_sa_list \
             $rec_ele_list $rec_vdw_list $rec_pb_list $rec_sa_list \
             $lig_ele_list $lig_vdw_list $lig_pb_list $lig_sa_list
@@ -914,7 +914,7 @@ proc ::cafe::mmpbsa_3ways::write_out { fp title end ele_list vdw_list pb_list sa
     write_item $fp "Total:" $tot_list
     puts $fp $end
 }
-proc ::cafe::mmpbsa_3ways::write_delta_item_2ways { fp name cr_list lig_list } {
+proc ::cafe::mmpbsa_3ways::write_delta_item_3ways { fp name cr_list lig_list } {
 
     set fmt "   %-6s %15s %15.4f %15.4f"
 
@@ -981,7 +981,7 @@ proc ::cafe::mmpbsa_3ways::calc_mm { molid prefix selstr trajname topname topfmt
 
     return [list $ele_list $vdw_list]
 }
-proc ::cafe::mmpbsa_3ways::write_delta_2ways {
+proc ::cafe::mmpbsa_3ways::write_delta_3ways {
     fp title end
     com_ele_list com_vdw_list com_pb_list com_sa_list
     rec_ele_list rec_vdw_list rec_pb_list rec_sa_list
@@ -998,46 +998,46 @@ proc ::cafe::mmpbsa_3ways::write_delta_2ways {
         set cr_ele_list [vecsub $com_ele_list $rec_ele_list]
         set cr_vdw_list [vecsub $com_vdw_list $rec_vdw_list]
 
-        write_delta_item_2ways $fp "Elec:" $cr_ele_list $lig_ele_list
-        write_delta_item_2ways $fp "Vdw:"  $cr_vdw_list $lig_vdw_list
+        write_delta_item_3ways $fp "Elec:" $cr_ele_list $lig_ele_list
+        write_delta_item_3ways $fp "Vdw:"  $cr_vdw_list $lig_vdw_list
     }
 
     if { $pb } {
         set cr_pb_list [vecsub $com_pb_list $rec_pb_list]
-        write_delta_item_2ways $fp "PB:" $cr_pb_list $lig_pb_list
+        write_delta_item_3ways $fp "PB:" $cr_pb_list $lig_pb_list
     }
 
     if { $sa } {
         set cr_sa_list [vecsub $com_sa_list $rec_sa_list]
-        write_delta_item_2ways $fp "SA:" $cr_sa_list $lig_sa_list
+        write_delta_item_3ways $fp "SA:" $cr_sa_list $lig_sa_list
     }
 
     if { $mm } {
         set cr_gas_list [vecadd $cr_ele_list $cr_vdw_list]
         set lig_gas_list [vecadd $lig_ele_list $lig_vdw_list]
 
-        write_delta_item_2ways $fp "Gas:" $cr_gas_list $lig_gas_list
+        write_delta_item_3ways $fp "Gas:" $cr_gas_list $lig_gas_list
     }
 
     if { $pb && $sa } {
         set cr_sol_list [vecadd $cr_pb_list $cr_sa_list]
         set lig_sol_list [vecadd $lig_pb_list $lig_sa_list]
 
-        write_delta_item_2ways $fp "Sol:" $cr_sol_list $lig_sol_list
+        write_delta_item_3ways $fp "Sol:" $cr_sol_list $lig_sol_list
     }
 
     if { $mm && $pb } {
         set cr_pol_list [vecadd $cr_ele_list $cr_pb_list]
         set lig_pol_list [vecadd $lig_ele_list $lig_pb_list]
 
-        write_delta_item_2ways $fp "Pol:" $cr_pol_list $lig_pol_list
+        write_delta_item_3ways $fp "Pol:" $cr_pol_list $lig_pol_list
     }
 
     if { $mm && $sa } {
         set cr_npol_list [vecadd $cr_vdw_list $cr_sa_list]
         set lig_npol_list [vecadd $lig_vdw_list $lig_sa_list]
 
-        write_delta_item_2ways $fp "Npol:" $cr_npol_list $lig_npol_list
+        write_delta_item_3ways $fp "Npol:" $cr_npol_list $lig_npol_list
     }
 
     set cr_tot_list { }
@@ -1068,7 +1068,7 @@ proc ::cafe::mmpbsa_3ways::write_delta_2ways {
         }
     }
 
-    write_delta_item_2ways $fp "Total:" $cr_tot_list $lig_tot_list
+    write_delta_item_3ways $fp "Total:" $cr_tot_list $lig_tot_list
 
     puts $fp $end
 }
