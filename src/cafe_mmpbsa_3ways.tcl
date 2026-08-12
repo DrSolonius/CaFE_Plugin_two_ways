@@ -991,6 +991,10 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
             file delete $com_trj
         }
 
+        if { [file exists $rec_trj] } {
+            file delete $rec_trj
+        }
+
         if { [file exists $lig_trj] } {
             file delete $lig_trj
         }
