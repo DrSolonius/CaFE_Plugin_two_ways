@@ -23,6 +23,7 @@ package require cafe_mmpbsa
 package require cafe_lie
 package provide cafe 1.0
 package require cafe_mmpbsa_2ways
+package require cafe_mmpbsa_3ways
 namespace eval ::cafe:: {
     namespace export mmpbsa mmpbsa_2ways lie
 }

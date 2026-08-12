@@ -20,7 +20,7 @@ namespace eval ::cafe::mmpbsa_3ways:: {
     -pb_indi -pb_exdi -pb_scale -pb_perfil -pb_prbrad -pb_linit -pb_maxc
     -pb_bndcon -pb_bcfl -pb_chgm -pb_srfm -pb_swin -pb_sdens -gb
     -gb_exdi -gb_ioncon -gb_sa -gb_sagamma -sa -sa_exe -sa_rad -sa_gamma
-    -sa_beta -sa_prbrad -sa_samples
+    -sa_beta -sa_prbrad -sa_samples -rec_top -rec_trj -rec_top_type -rec_trj_type -rec_first -rec_last -rec_stride
     }
 
     variable topfile ""
@@ -35,6 +35,14 @@ namespace eval ::cafe::mmpbsa_3ways:: {
     variable ligfirst 0
     variable liglast -1
     variable ligstride 1
+
+    variable rectopfile ""
+    variable rectrjfile { }
+    variable rectoptype "auto"
+    variable rectrjtype "auto"
+    variable recfirst 0
+    variable reclast -1
+    variable recstride 1
 
     variable parfile { }
     variable method ""
