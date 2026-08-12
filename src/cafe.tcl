@@ -38,14 +38,12 @@ proc ::cafe::lie { args } { return [eval ::cafe::lie::lie $args] }
 proc mmpbsa_2ways { args } {
     return [eval ::cafe::mmpbsa_2ways $args]
 }
-
 proc ::cafe::mmpbsa_2ways { args } {
     return [eval ::cafe::mmpbsa_2ways::mmpbsa $args]
 }
 proc mmpbsa_3ways { args } {
     return [eval ::cafe::mmpbsa_3ways $args]
 }
-
 proc ::cafe::mmpbsa_3ways { args } {
     return [eval ::cafe::mmpbsa_3ways::mmpbsa $args]
 }
