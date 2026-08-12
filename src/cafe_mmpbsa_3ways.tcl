@@ -166,7 +166,14 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
     variable ligtrjtype
     variable ligfirst
     variable liglast
-    variable ligstride
+    variable ligstride 
+    variable rectopfile
+    variable rectrjfile
+    variable rectoptype
+    variable rectrjtype
+    variable recfirst
+    variable reclast
+    variable recstride
     variable toptype
     variable trjtype
     variable parfile
@@ -260,6 +267,27 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
                 }
                 -lig_stride {
                     set ligstride [check_pos_int $val "lig_stride"]
+                }
+                -rec_top {
+                    set rectopfile [check_file $val "rec_top"]
+                }
+                -rec_trj {
+                    lappend rectrjfile [check_file $val "rec_trj"]
+                }
+                -rec_top_type {
+                    set rectoptype [check_string $val "rec_top_type"]
+                }
+                -rec_trj_type {
+                    set rectrjtype [check_string $val "rec_trj_type"]
+                }
+                -rec_first {
+                    set recfirst [check_int $val "rec_first"]
+                }
+                -rec_last {
+                    set reclast [check_int $val "rec_last"]
+                }
+                -rec_stride {
+                    set recstride [check_pos_int $val "rec_stride"]
                 }
                 -par {
                     lappend parfile [check_file $val "par"]
