@@ -353,7 +353,7 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
         show -err "Multi-trajectory MM/PBSA requires -lig_free"
     }
     if { $rectopfile eq "" } {
-    show -err "Three-trajectory MM/PBSA requires -rec_top"
+        show -err "Three-trajectory MM/PBSA requires -rec_top"
     }
 
     if { [llength $rectrjfile] == 0 } {
@@ -622,6 +622,85 @@ proc ::cafe::mmpbsa_3ways::mmpbsa { args } {
     mol addfile $com_trj type dcd waitfor all
     show -info "Loaded [molinfo $currmol get numframes] frames for complex"
     
+    # ***************************************************************
+    # ************ Prepare independent free receptor ***************
+    # ***************************************************************
+
+    if { $rectoptype eq "auto" } {
+        set recmol [mol new $rectopfile waitfor all]
+    } else {
+        set recmol [mol new $rectopfile type $rectoptype waitfor all]
+    }
+
+    set rectoptype [molinfo $recmol get filetype]
+
+    # check free receptor topology type
+    if { $rectoptype ne "psf" && $rectoptype ne "parm" && $rectoptype ne "parm7" } {
+        show -err "Currently only AMBER- and CHARMM/X-PLOR-formatted free receptor topology files are supported"
+    }
+
+    # check free receptor selection
+    set rec_free_sel [atomselect $recmol $recsel]
+    set rec_free_natoms [$rec_free_sel num]
+
+    if { !$rec_free_natoms } {
+        show -err "Found zero atoms for free receptor selection"
+    } else {
+        show -info "Found $rec_free_natoms atoms for free receptor"
+    }
+
+    $rec_free_sel delete
+
+    # check free receptor frame range
+    if { $reclast != -1 && $reclast < $recfirst } {
+        show -err "'rec_last' should be not less than 'rec_first'"
+    }
+
+    # load independent free receptor trajectory
+    foreach f $rectrjfile {
+        if { $rectrjtype eq "auto" } {
+            mol addfile $f waitfor all $recmol
+        } else {
+            mol addfile $f type $rectrjtype waitfor all $recmol
+        }
+    }
+
+    set old_rec_nframes [molinfo $recmol get numframes]
+    show -info "Loaded $old_rec_nframes frames for free receptor"
+
+    if { $recfirst < 0 || $recfirst >= $old_rec_nframes } {
+        show -err "'rec_first' ($recfirst) is outside free receptor trajectory ($old_rec_nframes frames)"
+    }
+
+    if { $reclast != -1 && ($reclast < 0 || $reclast >= $old_rec_nframes) } {
+        show -err "'rec_last' ($reclast) is outside free receptor trajectory ($old_rec_nframes frames)"
+    }
+
+    if { $recfirst > 0 } {
+        animate delete end [expr $recfirst - 1] $recmol
+    }
+
+    if { $reclast != -1 && $reclast < [expr $old_rec_nframes - 1] } {
+        animate delete beg [expr $reclast - $recfirst + 1] $recmol
+    }
+
+    show -info "Generating new trajectory for free receptor"
+
+    set rec_trj "_mmpbsa_rec_tmp.dcd"
+
+    animate write dcd $rec_trj waitfor all skip $recstride $recmol
+
+    mol delete $recmol
+
+    set recmol [mol new $rectopfile type $rectoptype waitfor all]
+
+    mol addfile $rec_trj type dcd waitfor all $recmol
+
+    show -info "Loaded [molinfo $recmol get numframes] frames for free receptor"
+
+
+
+
     # ***************************************************************
     # ************** Prepare independent free ligand ****************
     # ***************************************************************
