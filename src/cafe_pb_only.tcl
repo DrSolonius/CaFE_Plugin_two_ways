@@ -109,7 +109,7 @@ proc ::cafe::pb_only::print_usage { } {
 }
 
 proc ::cafe::pb_only::pb_only { args } {
-    variable validargs
+    
 
     variable validargs
 
@@ -156,57 +156,51 @@ proc ::cafe::pb_only::pb_only { args } {
     foreach { key val } $args {
         if { [string match -?* $key] } {
             switch -nocase -- $key {
+
                 -top {
                     set topfile [check_file $val "top"]
                 }
+
                 -top_type {
                     set toptype [check_string $val "top_type"]
                 }
+
                 -trj {
                     lappend trjfile [check_file $val "trj"]
                 }
+
                 -trj_type {
                     set trjtype [check_string $val "trj_type"]
                 }
+
                 -par {
                     lappend parfile [check_file $val "par"]
                 }
+
                 -out {
                     set outfile $val
                 }
+
                 -debug {
                     set debug [check_int $val "debug"]
                 }
+
                 -first {
                     set first [check_int $val "first"]
                 }
+
                 -last {
                     set last [check_int $val "last"]
                 }
+
                 -stride {
                     set stride [check_pos_int $val "stride"]
                 }
+
                 -com {
                     set comsel $val
                 }
-                -rec {
-                    set recsel $val
-                }
-                -lig {
-                    set ligsel $val
-                }
-                -mm {
-                    set mm [check_bool $val "mm"]
-                }
-                -pb {
-                    set pb [check_nneg_int $val "pb"]
-                }
-                -gb {
-                    set gb [check_nneg_int $val "gb"]
-                }
-                -sa {
-                    set sa [check_nneg_int $val "sa"]
-                }
+
                 default {
                     if { $key ni $validargs } {
                         show -err "Found unknown argument '$key'"
