@@ -295,18 +295,7 @@ proc ::cafe::pb_only::pb_only { args } {
         lappend parfile [file join $::env(CAFEDIR) "par_all22_prot.inp"]
     }
 
-    if { $mm } { check_exe $mm_exe "mm_exe"}
-    if { $pb } { check_exe $pb_exe "pb_exe"}
-    if { $gb } { check_exe $mm_exe "mm_exe"}
-    if { $sa == 2 } { check_exe $sa_exe "sa_exe"}
-
-    if { $pb && $gb } {
-        show -err "Select only one implicit model at a time."
-    }
-
-    if { $gb && ($gb_sa && $sa) } {
-        show -err "Select only one SASA method at a time."
-    }
+    check_exe $pb_exe "pb_exe"
 
     # load topology file
     if { $toptype eq "auto" } {
@@ -327,22 +316,17 @@ proc ::cafe::pb_only::pb_only { args } {
         show -err "Selection of complex must be specified"
     }
 
-    if { ($recsel eq "" && $ligsel ne "") || ($recsel ne "" && $ligsel eq "") } {
-        show -err "Selections of both receptor and ligand should be specified"
+    set sel [atomselect $currmol $comsel]
+    set natoms [$sel num]
+
+    if { !$natoms } {
+        show -err "Found zero atoms for complex"
+    } else {
+        show -info "Found $natoms atoms for complex"
     }
 
-    foreach name { complex receptor ligand } selstr [list $comsel $recsel $ligsel] {
-        if { $selstr ne "" } {
-            set sel [atomselect $currmol $selstr]
-            set natoms [$sel num]
-            if { !$natoms } {
-                show -err "Found zero atoms for $name"
-            } else {
-                show -info "Found $natoms atoms for $name"
-            }
-            $sel delete
-        }
-    }
+    $sel delete
+    
 
     # check radii setting
     if { $pb } {
