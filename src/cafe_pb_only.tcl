@@ -820,27 +820,21 @@ proc ::cafe::pb_only::assign_radii_yamagishi { molid } {
 }
 
 proc ::cafe::pb_only::calc_pb { molid prefix selstr } {
-    
+    variable pb_exe
     variable kt2kc
     variable j2cal
     variable first
     variable stride
     variable debug
+    set sel [atomselect $molid $selstr]
 
-    # ------------------------------------------------------------
-    # Check whether all atomic charges in the selected component
-    # are zero. We use sum(abs(q)), not the net charge, because a
-    # molecule can have net charge 0 but still contain partial charges.
-    # ------------------------------------------------------------
-    set qsel [atomselect $molid $selstr]
+    # Suma absoluta de cargas
     set qabs 0.0
-
-    foreach q [$qsel get charge] {
+    foreach q [$sel get charge] {
         set qabs [expr {$qabs + abs($q)}]
     }
 
-    $qsel delete
-
+    $sel delete
     # ------------------------------------------------------------
     # If every atomic charge is zero, the PB electrostatic term is
     # zero. Do not call APBS/DelPhi because the source term is null.
