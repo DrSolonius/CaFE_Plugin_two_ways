@@ -328,21 +328,11 @@ proc ::cafe::pb_only::pb_only { args } {
     $sel delete
     
 
-    # check radii setting
-    if { $pb } {
-        if { $pb_rad eq "charmm" && ![llength $parfile] } {
-            show -err "Need a CHARMM formatted parameter file for pb_rad charmm"
-        } elseif { $pb_rad eq "parm7" && ($toptype ne "parm" && $toptype ne "parm7") } {
-            show -err "Need an AMBER PARM7 file for pb_rad parm7"
-        }
-    }
-
-    if { $sa } {
-        if { $sa_rad eq "charmm" && ![llength $parfile] } {
-            show -err "Need a CHARMM formatted parameter file for sa_rad charmm"
-        } elseif { $sa_rad eq "parm7" && ($toptype ne "parm" && $toptype ne "parm7") } {
-            show -err "Need an AMBER PARM7 file for sa_rad parm7"
-        }
+   # check radii setting
+    if { $pb_rad eq "charmm" && ![llength $parfile] } {
+        show -err "Need a CHARMM formatted parameter file for pb_rad charmm"
+    } elseif { $pb_rad eq "parm7" && ($toptype ne "parm" && $toptype ne "parm7") } {
+        show -err "Need an AMBER PARM7 file for pb_rad parm7"
     }
 
     # load trajectory
@@ -386,29 +376,7 @@ proc ::cafe::pb_only::pb_only { args } {
     foreach { d h m s } [timer $start0] { break }
     show -info "It took $d days $h hrs $m min $s sec"
 
-    # ***************************************************************
-    # **************** Do the Gas-Phase Calculations ****************
-    # ***************************************************************
-    if { $mm } {
-        show -info "Calculating the MM term"
-        set start [clock seconds]
-
-        set com_mm_result [calc_mm $currmol com $comsel $com_trj]
-        foreach { com_ele_list com_vdw_list } $com_mm_result { break }
-
-        if { $recsel ne "" } {
-            set rec_mm_result [calc_mm $currmol rec $recsel $com_trj]
-            foreach { rec_ele_list rec_vdw_list } $rec_mm_result { break }
-        }
-
-        if { $ligsel ne "" } {
-            set lig_mm_result [calc_mm $currmol lig $ligsel $com_trj]
-            foreach { lig_ele_list lig_vdw_list } $lig_mm_result { break }
-        }
-
-        foreach { d h m s } [timer $start] { break }
-        show -info "It took $d days $h hrs $m min $s sec"
-    }
+   
 
     # *********************************************************************
     # **************** Do the Polar Solvation Calculations ****************
@@ -417,24 +385,19 @@ proc ::cafe::pb_only::pb_only { args } {
         show -info "Calculating the PB term"
         set start [clock seconds]
 
-        # assign radii
         set ar_args "$currmol $pb_rad"
+
         if { $pb_rad eq "charmm" } {
-            foreach p $parfile { append ar_args " \"$p\"" }
+            foreach p $parfile {
+                append ar_args " \"$p\""
+            }
         } elseif { $pb_rad eq "parm7" } {
             append ar_args " \"$topfile\""
         }
+
         eval assign_radii $ar_args
 
         set com_pb_list [calc_pb $currmol com $comsel]
-
-        if { $recsel ne "" } {
-            set rec_pb_list [calc_pb $currmol rec $recsel]
-        }
-
-        if { $ligsel ne "" } {
-            set lig_pb_list [calc_pb $currmol lig $ligsel]
-        }
 
         foreach { d h m s } [timer $start] { break }
         show -info "It took $d days $h hrs $m min $s sec"
