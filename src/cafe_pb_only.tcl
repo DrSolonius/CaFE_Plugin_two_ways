@@ -222,66 +222,64 @@ proc ::cafe::pb_only::pb_only { args } {
 
    
 
-    if { $pb } {
-        foreach { key val } $args {
-            switch -nocase -- $key {
-                -pb_exe {
-                    set pb_exe $val
+    foreach { key val } $args {
+        switch -nocase -- $key {
+            -pb_exe {
+                set pb_exe $val
+            }
+            -pb_siz {
+                set pb_siz [check_file $val "pb_siz"]
+            }
+            -pb_crg {
+                set pb_crg [check_file $val "pb_crg"]
+            }
+            -pb_rad {
+                set pb_rad [check_string $val "pb_rad"]
+            }
+            -pb_indi {
+                set pb_indi [check_pos_real $val "pb_indi"]
+            }
+            -pb_exdi {
+                set pb_exdi [check_pos_real $val "pb_exdi"]
+            }
+            -pb_scale {
+                set pb_scale [check_pos_real $val "pb_scale"]
+            }
+            -pb_perfil {
+                set pb_perfil [check_pos_real $val "pb_perfil"]
+                if { $pb_perfil > 100 } {
+                    show -err "'pb_perfil' should be less than 100"
                 }
-                -pb_siz {
-                    set pb_siz [check_file $val "pb_siz"]
-                }
-                -pb_crg {
-                    set pb_crg [check_file $val "pb_crg"]
-                }
-                -pb_rad {
-                    set pb_rad [check_string $val "pb_rad"]
-                }
-                -pb_indi {
-                    set pb_indi [check_pos_real $val "pb_indi"]
-                }
-                -pb_exdi {
-                    set pb_exdi [check_pos_real $val "pb_exdi"]
-                }
-                -pb_scale {
-                    set pb_scale [check_pos_real $val "pb_scale"]
-                }
-                -pb_perfil {
-                    set pb_perfil [check_pos_real $val "pb_perfil"]
-                    if { $pb_perfil > 100 } {
-                        show -err "'pb_perfil' should be less than 100"
-                    }
-                }
-                -pb_prbrad {
-                    set pb_prbrad [check_nneg_real $val "pb_prbrad"]
-                }
-                -pb_linit {
-                    set pb_linit [check_pos_int $val "pb_linit"]
-                }
-                -pb_maxc {
-                    set pb_maxc [check_pos_real $val "pb_maxc"]
-                }
-                -pb_bndcon {
-                    set pb_bndcon [check_pos_int $val "pb_bndcon"]
-                }
-                -pb_bcfl {
-                    set pb_bcfl [check_string $val "pb_bcfl"]
-                }
-                -pb_chgm {
-                    set pb_chgm [check_string $val "pb_chgm"]
-                }
-                -pb_srfm {
-                    set pb_srfm [check_string $val "pb_srfm"]
-                }
-                -pb_swin {
-                    set pb_swin [check_pos_real $val "pb_swin"]
-                }
-                -pb_sdens {
-                    set pb_sdens [check_pos_real $val "pb_sdens"]
-                }
-                default {
-                    continue
-                }
+            }
+            -pb_prbrad {
+                set pb_prbrad [check_nneg_real $val "pb_prbrad"]
+            }
+            -pb_linit {
+                set pb_linit [check_pos_int $val "pb_linit"]
+            }
+            -pb_maxc {
+                set pb_maxc [check_pos_real $val "pb_maxc"]
+            }
+            -pb_bndcon {
+                set pb_bndcon [check_pos_int $val "pb_bndcon"]
+            }
+            -pb_bcfl {
+                set pb_bcfl [check_string $val "pb_bcfl"]
+            }
+            -pb_chgm {
+                set pb_chgm [check_string $val "pb_chgm"]
+            }
+            -pb_srfm {
+                set pb_srfm [check_string $val "pb_srfm"]
+            }
+            -pb_swin {
+                set pb_swin [check_pos_real $val "pb_swin"]
+            }
+            -pb_sdens {
+                set pb_sdens [check_pos_real $val "pb_sdens"]
+            }
+            default {
+                continue
             }
         }
     }
