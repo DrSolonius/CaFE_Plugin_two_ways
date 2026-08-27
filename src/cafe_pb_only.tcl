@@ -111,6 +111,8 @@ proc ::cafe::pb_only::print_usage { } {
 proc ::cafe::pb_only::pb_only { args } {
     variable validargs
 
+    variable validargs
+
     variable topfile
     variable trjfile
     variable toptype
@@ -122,14 +124,7 @@ proc ::cafe::pb_only::pb_only { args } {
     variable last
     variable stride
     variable comsel
-    variable recsel
-    variable ligsel
 
-    variable mm
-    variable mm_exe
-    variable mm_diel
-
-    variable pb
     variable pb_exe
     variable pb_siz
     variable pb_crg
@@ -147,20 +142,6 @@ proc ::cafe::pb_only::pb_only { args } {
     variable pb_srfm
     variable pb_swin
     variable pb_sdens
-
-    variable gb
-    variable gb_exdi
-    variable gb_ioncon
-    variable gb_sa
-    variable gb_sagamma
-
-    variable sa
-    variable sa_exe
-    variable sa_rad
-    variable sa_gamma
-    variable sa_beta
-    variable sa_prbrad
-    variable sa_samples
 
     # *********************************************************
     # **************** Do the Preparation Work ****************
