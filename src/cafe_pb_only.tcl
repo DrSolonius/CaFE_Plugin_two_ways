@@ -390,9 +390,10 @@ proc ::cafe::pb_only::pb_only { args } {
     show -info "It took $d days $h hrs $m min $s sec"
 
     
-    # *****************************************************
-    # **************** Generate the Result ****************
-    # *****************************************************
+# *****************************************************
+# **************** Generate the Result ****************
+# *****************************************************
+
     show -info "Generating the result"
     set start [clock seconds]
 
@@ -404,136 +405,25 @@ proc ::cafe::pb_only::pb_only { args } {
     puts $result $sepline
     puts $result [format $tfmt Title Frames Mean SD]
     puts $result $sepline
+    puts $result " Complex:"
 
-    if { !$mm } {
-        set com_ele_list { }
-        set com_vdw_list { }
-    }
-    if { !$pb } {
-        set com_pb_list { }
-    }
-    if { !$sa } {
-        set com_sa_list { }
-    }
+    write_item $result "PB:" $com_pb_list
 
-    write_out $result " Complex:" $sepline $com_ele_list $com_vdw_list $com_pb_list $com_sa_list
-
-    if { $recsel ne "" } {
-        if { !$mm } {
-            set rec_ele_list { }
-            set rec_vdw_list { }
-        }
-        if { !$pb } {
-            set rec_pb_list { }
-        }
-        if { !$sa } {
-            set rec_sa_list { }
-        }
-
-        write_out $result " Receptor:" $sepline $rec_ele_list $rec_vdw_list $rec_pb_list $rec_sa_list
-    }
-
-    if { $ligsel ne "" } {
-        if { !$mm } {
-            set lig_ele_list { }
-            set lig_vdw_list { }
-        }
-        if { !$pb } {
-            set lig_pb_list { }
-        }
-        if { !$sa } {
-            set lig_sa_list { }
-        }
-
-        write_out $result " Ligand:" $sepline $lig_ele_list $lig_vdw_list $lig_pb_list $lig_sa_list
-    }
-
-    if { $comsel ne "" && $recsel ne "" && $ligsel ne "" } {
-        set del_ele_list [vecsub $com_ele_list [vecadd $rec_ele_list $lig_ele_list]]
-
-        set del_vdw_list [vecsub $com_vdw_list [vecadd $rec_vdw_list $lig_vdw_list]]
-
-        set del_pb_list [vecsub $com_pb_list [vecadd $rec_pb_list $lig_pb_list]]
-
-        set del_sa_list [vecsub $com_sa_list [vecadd $rec_sa_list $lig_sa_list]]
-
-        write_out $result " Delta:" $sepline $del_ele_list $del_vdw_list $del_pb_list $del_sa_list
-    }
-
+    puts $result $sepline
     puts $result " * All energy values are in kcal/mol"
 
     close $result
 
-    if { $debug < 2 } { file delete $com_trj }
+    if { $debug < 2 } {
+        file delete $com_trj
+    }
 
     foreach { d h m s } [timer $start] { break }
     show -info "It took $d days $h hrs $m min $s sec"
 
     foreach { d h m s } [timer $start0] { break }
     show -info "Total elapsed time: $d days $h hrs $m min $s sec"
-}
 
-proc ::cafe::pb_only::write_out { fp title end ele_list vdw_list pb_list sa_list } {
-    variable mm
-    variable pb
-    variable sa
-
-    puts $fp $title
-
-    if { $mm } {
-        write_item $fp "Elec:" $ele_list
-        write_item $fp "Vdw:" $vdw_list
-    }
-
-    if { $pb } {
-        write_item $fp "PB:" $pb_list
-    }
-
-    if { $sa } {
-        write_item $fp "SA:" $sa_list
-    }
-
-    if { $mm } {
-        set gas_list [vecadd $ele_list $vdw_list]
-        write_item $fp "Gas:" $gas_list
-    }
-
-    if { $pb && $sa } {
-        set sol_list [vecadd $pb_list $sa_list]
-        write_item $fp "Sol:" $sol_list
-    }
-
-    if { $mm && $pb } {
-        set pol_list [vecadd $ele_list $pb_list]
-        write_item $fp "Pol:" $pol_list
-    }
-
-    if { $mm && $sa } {
-        set npol_list [vecadd $vdw_list $sa_list]
-        write_item $fp "Npol:" $npol_list
-    }
-
-    set tot_list { }
-    if { $mm } {
-        set tot_list $gas_list
-    }
-    if { $pb } {
-        if { ![llength $tot_list] } {
-            set tot_list $pb_list
-        } else {
-            set tot_list [vecadd $tot_list $pb_list]
-        }
-    }
-    if { $sa } {
-        if { ![llength $tot_list] } {
-            set tot_list $sa_list
-        } else {
-            set tot_list [vecadd $tot_list $sa_list]
-        }
-    }
-    write_item $fp "Total:" $tot_list
-    puts $fp $end
-}
 
 # ######################################################################
 #                            MM related
