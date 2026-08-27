@@ -423,6 +423,7 @@ proc ::cafe::pb_only::pb_only { args } {
 
     foreach { d h m s } [timer $start0] { break }
     show -info "Total elapsed time: $d days $h hrs $m min $s sec"
+    }
 
 
 # ######################################################################
