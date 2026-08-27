@@ -820,7 +820,7 @@ proc ::cafe::pb_only::assign_radii_yamagishi { molid } {
 }
 
 proc ::cafe::pb_only::calc_pb { molid prefix selstr } {
-    variable pb
+    
     variable kt2kc
     variable j2cal
     variable first
@@ -853,20 +853,30 @@ proc ::cafe::pb_only::calc_pb { molid prefix selstr } {
 
         show -info "All atomic charges are zero for $prefix; PB energy set to 0.0"
 
-    } elseif { $pb == 1 } {
+    }  else {
 
-        set pb_list [run_delphi $molid $prefix $selstr]
-        set conv $kt2kc
+        # ------------------------------------------------------------
+        # Select PB solver from executable name
+        # ------------------------------------------------------------
+        set pb_program [string tolower [file tail $pb_exe]]
 
-    } elseif { $pb == 2 } {
+        if { [string match "*apbs*" $pb_program] } {
 
-        set pb_list [run_apbs $molid $prefix $selstr]
-        set conv $j2cal
+            show -info "Using APBS for PB calculation"
+            set pb_list [run_apbs $molid $prefix $selstr]
+            set conv $j2cal
 
-    } else {
+        } elseif { [string match "*delphi*" $pb_program] } {
 
-        show -err "Unknown PB type"
-    }
+            show -info "Using DelPhi for PB calculation"
+            set pb_list [run_delphi $molid $prefix $selstr]
+            set conv $kt2kc
+
+        } else {
+
+            show -err "Unknown PB executable: $pb_exe. Expected APBS or DelPhi."
+        }
+}
 
     # ------------------------------------------------------------
     # Debug output

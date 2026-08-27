@@ -14,4 +14,4 @@ package ifneeded cafe_mmpbsa 1.0 "set env(CAFEDIR) [list $dir] ; [list source [f
 package ifneeded cafe_mmpbsa_2ways 1.0 "set env(CAFEDIR) [list $dir] ; [list source [file join $dir cafe_mmpbsa_2ways.tcl]]"
 package ifneeded cafe_mmpbsa_3ways 1.0 "set env(CAFEDIR) [list $dir] ; [list source [file join $dir cafe_mmpbsa_3ways.tcl]]"
 package ifneeded cafe_lie 1.0 "set env(CAFEDIR) [list $dir] ; [list source [file join $dir cafe_lie.tcl]]"
-
+package ifneeded cafe_pb_only 1.0 "set env(CAFEDIR) [list $dir] ; [list source [file join $dir cafe_pb_only.tcl]]"
