@@ -382,6 +382,36 @@ proc ::cafe::pb_only::pb_only { args } {
 
     set com_pb_list [calc_pb $currmol com $comsel]
 
+
+    foreach { pd ph pm ps } [timer $start] { break }
+    show -info "PB calculation took $pd days $ph hrs $pm min $ps sec"
+
+
+    # *****************************************************
+    # **************** Generate the Result ****************
+    # *****************************************************
+
+    show -info "Generating the result"
+    set start_result [clock seconds]
+
+    set result [open $outfile w]
+
+    set tfmt "   %-6s %15s %15s %15s"
+    set sepline " [string repeat - 60]"
+
+    puts $result $sepline
+    puts $result [format $tfmt Title Frames Mean SD]
+    puts $result $sepline
+    puts $result " Complex:"
+
+    write_item $result "PB:" $com_pb_list
+
+    puts $result $sepline
+    puts $result " * All energy values are in kcal/mol"
+
+    # ------------------------------------------------------------
+    # Total execution time
+    # ------------------------------------------------------------
     foreach { td th tm ts } [timer $start0] { break }
 
     puts $result ""
@@ -393,10 +423,12 @@ proc ::cafe::pb_only::pb_only { args } {
         file delete $com_trj
     }
 
-    foreach { rd rh rm rs } [timer $start] { break }
-    show -info "Result generation took $rd days $rh hrs $rm min $rs sec"
+    foreach { rd rh rm rs } [timer $start_result] { break }
 
-    show -info "Total elapsed time: $td days $th hrs $tm min $ts sec""
+    show -info "Result generation took $rd days $rh hrs $rm min $rs sec"
+    show -info "Total elapsed time: $td days $th hrs $tm min $ts sec"
+}
+    
 
     
 # *****************************************************
