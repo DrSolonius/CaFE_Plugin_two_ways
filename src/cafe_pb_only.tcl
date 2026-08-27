@@ -382,8 +382,21 @@ proc ::cafe::pb_only::pb_only { args } {
 
     set com_pb_list [calc_pb $currmol com $comsel]
 
-    foreach { d h m s } [timer $start] { break }
-    show -info "It took $d days $h hrs $m min $s sec"
+    foreach { td th tm ts } [timer $start0] { break }
+
+    puts $result ""
+    puts $result " Total execution time: $td days $th hrs $tm min $ts sec"
+
+    close $result
+
+    if { $debug < 2 } {
+        file delete $com_trj
+    }
+
+    foreach { rd rh rm rs } [timer $start] { break }
+    show -info "Result generation took $rd days $rh hrs $rm min $rs sec"
+
+    show -info "Total elapsed time: $td days $th hrs $tm min $ts sec""
 
     
 # *****************************************************
@@ -422,12 +435,10 @@ proc ::cafe::pb_only::pb_only { args } {
         file delete $com_trj
     }
 
-    foreach { d h m s } [timer $start] { break }
-    show -info "It took $d days $h hrs $m min $s sec"
+    foreach { d2 h2 m2 s2 } [timer $start] { break }
+    show -info "Result generation took $d2 days $h2 hrs $m2 min $s2 sec"
 
-    foreach { d h m s } [timer $start0] { break }
     show -info "Total elapsed time: $d days $h hrs $m min $s sec"
-    }
 
 
 
