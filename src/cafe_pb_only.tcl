@@ -382,10 +382,8 @@ proc ::cafe::pb_only::pb_only { args } {
 
     set com_pb_list [calc_pb $currmol com $comsel]
 
-
     foreach { pd ph pm ps } [timer $start] { break }
     show -info "PB calculation took $pd days $ph hrs $pm min $ps sec"
-
 
     # *****************************************************
     # **************** Generate the Result ****************
@@ -409,9 +407,6 @@ proc ::cafe::pb_only::pb_only { args } {
     puts $result $sepline
     puts $result " * All energy values are in kcal/mol"
 
-    # ------------------------------------------------------------
-    # Total execution time
-    # ------------------------------------------------------------
     foreach { td th tm ts } [timer $start0] { break }
 
     puts $result ""
@@ -428,6 +423,7 @@ proc ::cafe::pb_only::pb_only { args } {
     show -info "Result generation took $rd days $rh hrs $rm min $rs sec"
     show -info "Total elapsed time: $td days $th hrs $tm min $ts sec"
 }
+
     
 
     
