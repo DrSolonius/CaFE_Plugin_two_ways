@@ -427,46 +427,7 @@ proc ::cafe::pb_only::pb_only { args } {
     
 
     
-# *****************************************************
-# **************** Generate the Result ****************
-# *****************************************************
 
-    show -info "Generating the result"
-    set start [clock seconds]
-
-    set result [open $outfile w]
-
-    set tfmt "   %-6s %15s %15s %15s"
-    set sepline " [string repeat - 60]"
-
-    puts $result $sepline
-    puts $result [format $tfmt Title Frames Mean SD]
-    puts $result $sepline
-    puts $result " Complex:"
-
-    write_item $result "PB:" $com_pb_list
-
-    puts $result $sepline
-    puts $result " * All energy values are in kcal/mol"
-
-    # ------------------------------------------------------------
-    # Total execution time
-    # ------------------------------------------------------------
-    foreach { d h m s } [timer $start0] { break }
-
-    puts $result ""
-    puts $result " Total execution time: $d days $h hrs $m min $s sec"
-
-    close $result
-
-    if { $debug < 2 } {
-        file delete $com_trj
-    }
-
-    foreach { d2 h2 m2 s2 } [timer $start] { break }
-    show -info "Result generation took $d2 days $h2 hrs $m2 min $s2 sec"
-
-    show -info "Total elapsed time: $d days $h hrs $m min $s sec"
 
 
 
