@@ -35,14 +35,6 @@ namespace eval ::cafe::pb_only:: {
     variable last -1
     variable stride 1
     variable comsel ""
-    variable recsel ""
-    variable ligsel ""
-
-    variable mm 0
-    variable mm_exe "namd2"
-    variable mm_diel 1.0
-
-    variable pb 0
     variable pb_exe "delphi77"
     variable pb_siz ""
     variable pb_crg ""
@@ -60,20 +52,6 @@ namespace eval ::cafe::pb_only:: {
     variable pb_srfm "smol"
     variable pb_swin 0.3
     variable pb_sdens 10.0
-
-    variable gb 0
-    variable gb_exdi 78.5
-    variable gb_ioncon 0.0
-    variable gb_sa 0
-    variable gb_sagamma 0.005
-
-    variable sa 0
-    variable sa_exe "apbs"
-    variable sa_rad "bondi"
-    variable sa_gamma 0.005
-    variable sa_beta 0.0
-    variable sa_prbrad 1.4
-    variable sa_samples 500
 }
 
 # print usage info
@@ -259,25 +237,9 @@ proc ::cafe::pb_only::pb_only { args } {
         }
     }
 
-    if { !$mm && !$pb && !$gb && !$sa } {
-        show -err "Need a calculation type!"
-    }
+   
 
-    if { $mm } {
-        foreach { key val } $args {
-            switch -nocase -- $key {
-                -mm_exe {
-                    set mm_exe $val
-                }
-                -mm_diel {
-                    set mm_diel [check_pos_real $val "mm_diel"]
-                }
-                default {
-                    continue
-                }
-            }
-        }
-    }
+   
 
     if { $pb } {
         foreach { key val } $args {
@@ -343,58 +305,8 @@ proc ::cafe::pb_only::pb_only { args } {
         }
     }
 
-    if { $gb } {
-        foreach { key val } $args {
-            switch -nocase -- $key {
-                -mm_exe {
-                    set mm_exe $val
-                }
-                -gb_exdi {
-                    set gb_exdi [check_pos_real $val "gb_exdi"]
-                }
-                -gb_ioncon {
-                    set gb_ioncon [check_nneg_real $val "gb_ioncon"]
-                }
-                -gb_sa {
-                    set gb_sa [check_bool $val "gb_sa"]
-                }
-                -gb_sagamma {
-                    set gb_sagamma [check_real $val "gb_sagamma"]
-                }
-                default {
-                    continue
-                }
-            }
-        }
-    }
-
-    if { $sa } {
-        foreach { key val } $args {
-            switch -nocase -- $key {
-                -sa_exe {
-                    set sa_exe $val
-                }
-                -sa_rad {
-                    set sa_rad [check_string $val "sa_rad"]
-                }
-                -sa_gamma {
-                    set sa_gamma [check_real $val "sa_gamma"]
-                }
-                -sa_beta {
-                    set sa_beta [check_real $val "sa_beta"]
-                }
-                -sa_prbrad {
-                    set sa_prbrad [check_pos_real $val "sa_prbrad"]
-                }
-                -sa_samples {
-                    set sa_samples [check_pos_int $val "sa_samples"]
-                }
-                default {
-                    continue
-                }
-            }
-        }
-    }
+    
+   
 
     # check mandatory arguments
     if { $topfile eq "" } {
