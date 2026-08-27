@@ -408,6 +408,14 @@ proc ::cafe::pb_only::pb_only { args } {
     puts $result $sepline
     puts $result " * All energy values are in kcal/mol"
 
+    # ------------------------------------------------------------
+    # Total execution time
+    # ------------------------------------------------------------
+    foreach { d h m s } [timer $start0] { break }
+
+    puts $result ""
+    puts $result " Total execution time: $d days $h hrs $m min $s sec"
+
     close $result
 
     if { $debug < 2 } {
