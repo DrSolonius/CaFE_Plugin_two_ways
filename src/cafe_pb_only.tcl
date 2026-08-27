@@ -13,12 +13,15 @@ namespace eval ::cafe::pb_only:: {
     variable j2cal 0.239
 
     variable validargs {
-        -top -trj -top_type -trj_type -par -out -debug -first -last -stride
-        -com -rec -lig -mm -mm_exe -mm_diel -pb -pb_exe -pb_siz -pb_crg -pb_rad
-        -pb_indi -pb_exdi -pb_scale -pb_perfil -pb_prbrad -pb_linit -pb_maxc
-        -pb_bndcon -pb_bcfl -pb_chgm -pb_srfm -pb_swin -pb_sdens -gb
-        -gb_exdi -gb_ioncon -gb_sa -gb_sagamma -sa -sa_exe -sa_rad -sa_gamma
-        -sa_beta -sa_prbrad -sa_samples
+        -top -trj -top_type -trj_type
+        -par -out -debug
+        -first -last -stride
+        -com
+        -pb_exe -pb_siz -pb_crg -pb_rad
+        -pb_indi -pb_exdi -pb_scale -pb_perfil
+        -pb_prbrad -pb_linit -pb_maxc
+        -pb_bndcon -pb_bcfl -pb_chgm -pb_srfm
+        -pb_swin -pb_sdens
     }
 
     variable topfile ""
