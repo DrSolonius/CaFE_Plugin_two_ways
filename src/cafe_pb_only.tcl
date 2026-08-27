@@ -56,55 +56,42 @@ namespace eval ::cafe::pb_only:: {
 
 # print usage info
 proc ::cafe::pb_only::print_usage { } {
+
     show -info "Usage: pb_only -top filename -trj filename \[-args...\]"
     show -info "Mandatory arguments:"
     show -info "  -top <topology filename>"
     show -info "  -trj <trajectory filename>"
+    show -info "  -com <complex selection>"
+
     show -info "Optional arguments:"
-    show -info "  -top_type <topology filetype>    -- default: auto"
-    show -info "  -trj_type <trajectory filetype>  -- default: auto"
-    show -info "  -par <force field parameters>    -- default: [file join $::env(CAFEDIR) par_all22_prot.inp]"
-    show -info "  -out <output filename>           -- default: result.log"
-    show -info "  -debug <debug level>             -- default: 0"
-    show -info "  -first <first frame>             -- default: 0"
-    show -info "  -last <last frame>               -- default: -1"
-    show -info "  -stride <stride>                 -- default: 1"
-    show -info "  -com <complex selection>         -- default: \"\""
-    show -info "  -rec <receptor selection>        -- default: \"\""
-    show -info "  -lig <ligand selection>          -- default: \"\""
-    show -info "  -mm <do gas-phase calculation>   -- default: 0"
-    show -info "  -mm_exe <path to NAMD>           -- default: \"namd2\""
-    show -info "  -mm_diel <dielectric constant>   -- default: 1.0"
-    show -info "  -pb <do PB calculation>          -- default: 0"
-    show -info "  -pb_exe <path to DelPhi/APBS>    -- default: \"delphi77\""
-    show -info "  -pb_siz <radii parameter file>   -- default: \"\""
-    show -info "  -pb_crg <charge parameter file>  -- default: \"\""
-    show -info "  -pb_rad <type of PB radii>       -- default: bondi"
-    show -info "  -pb_indi <internal dielectric>   -- default: 1.0"
-    show -info "  -pb_exdi <external dielectric>   -- default: 80.0"
-    show -info "  -pb_scale <scale>                -- default: 2.0"
-    show -info "  -pb_perfil <percentage of fill>  -- default: 80.0"
-    show -info "  -pb_prbrad <radius of probe>     -- default: 1.4"
-    show -info "  -pb_linit <linear iterations>    -- default: 1000"
-    show -info "  -pb_maxc <convergence threshold> -- default: 0.0001"
-    show -info "  -pb_bndcon <boundary condition>  -- default: 4"
-    show -info "  -pb_bcfl <boundary condition>    -- default: sdh"
-    show -info "  -pb_chgm <charge method>         -- default: spl0"
-    show -info "  -pb_srfm <surface method>        -- default: smol"
-    show -info "  -pb_swin <spline window width>   -- default: 0.3"
-    show -info "  -pb_sdens <number of grids>      -- default: 10.0"
-    show -info "  -gb <do GB calculation>          -- default: 0"
-    show -info "  -gb_exdi <external dielectric>   -- default: 78.5"
-    show -info "  -gb_ioncon <ion concentration>   -- default: 0.0"
-    show -info "  -gb_sa <do LCPO calculation>     -- default: 0"
-    show -info "  -gb_sagamma <surface tension>    -- default: 0.005"
-    show -info "  -sa <do SA calculation>          -- default: 0"
-    show -info "  -sa_exe <path to APBS>           -- default: \"apbs\""
-    show -info "  -sa_rad <type of SA radii>       -- default: bondi"
-    show -info "  -sa_gamma <surface tension>      -- default: 0.005"
-    show -info "  -sa_beta <surface offset>        -- default: 0.0"
-    show -info "  -sa_prbrad <radius of probe>     -- default: 1.4"
-    show -info "  -sa_samples <number of samples>  -- default: 500"
+    show -info "  -top_type <topology filetype>        -- default: auto"
+    show -info "  -trj_type <trajectory filetype>      -- default: auto"
+    show -info "  -par <force field parameters>"
+    show -info "  -out <output filename>               -- default: result.log"
+    show -info "  -debug <debug level>                 -- default: 0"
+    show -info "  -first <first frame>                 -- default: 0"
+    show -info "  -last <last frame>                   -- default: -1"
+    show -info "  -stride <stride>                     -- default: 1"
+
+    show -info "PB options:"
+    show -info "  -pb_exe <path to DelPhi/APBS>        -- default: delphi77"
+    show -info "  -pb_siz <radii parameter file>"
+    show -info "  -pb_crg <charge parameter file>"
+    show -info "  -pb_rad <type of PB radii>           -- default: bondi"
+    show -info "  -pb_indi <internal dielectric>       -- default: 1.0"
+    show -info "  -pb_exdi <external dielectric>       -- default: 80.0"
+    show -info "  -pb_scale <scale>                    -- default: 2.0"
+    show -info "  -pb_perfil <percentage of fill>     -- default: 80.0"
+    show -info "  -pb_prbrad <probe radius>            -- default: 1.4"
+    show -info "  -pb_linit <linear iterations>        -- default: 1000"
+    show -info "  -pb_maxc <convergence threshold>     -- default: 0.0001"
+    show -info "  -pb_bndcon <boundary condition>      -- default: 4"
+    show -info "  -pb_bcfl <boundary condition>        -- default: sdh"
+    show -info "  -pb_chgm <charge method>             -- default: spl0"
+    show -info "  -pb_srfm <surface method>            -- default: smol"
+    show -info "  -pb_swin <spline window width>       -- default: 0.3"
+    show -info "  -pb_sdens <grid density>             -- default: 10.0"
+
     show ""
 }
 
@@ -381,27 +368,26 @@ proc ::cafe::pb_only::pb_only { args } {
     # *********************************************************************
     # **************** Do the Polar Solvation Calculations ****************
     # *********************************************************************
-    if { $pb } {
-        show -info "Calculating the PB term"
-        set start [clock seconds]
 
-        set ar_args "$currmol $pb_rad"
+    show -info "Calculating the PB term"
+    set start [clock seconds]
 
-        if { $pb_rad eq "charmm" } {
-            foreach p $parfile {
-                append ar_args " \"$p\""
-            }
-        } elseif { $pb_rad eq "parm7" } {
-            append ar_args " \"$topfile\""
+    set ar_args "$currmol $pb_rad"
+
+    if { $pb_rad eq "charmm" } {
+        foreach p $parfile {
+            append ar_args " \"$p\""
         }
-
-        eval assign_radii $ar_args
-
-        set com_pb_list [calc_pb $currmol com $comsel]
-
-        foreach { d h m s } [timer $start] { break }
-        show -info "It took $d days $h hrs $m min $s sec"
+    } elseif { $pb_rad eq "parm7" } {
+        append ar_args " \"$topfile\""
     }
+
+    eval assign_radii $ar_args
+
+    set com_pb_list [calc_pb $currmol com $comsel]
+
+    foreach { d h m s } [timer $start] { break }
+    show -info "It took $d days $h hrs $m min $s sec"
 
     
     # *****************************************************
