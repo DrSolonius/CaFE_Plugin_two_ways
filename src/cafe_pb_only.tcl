@@ -1,6 +1,6 @@
-package provide cafe_mmpbsa 1.0
+package provide cafe_pb_only 1.0
 
-namespace eval ::cafe::mmpbsa:: {
+namespace eval ::cafe::pb_only:: {
     package require readcharmmpar ;# for ::Pararead::getvdwparam
     package require topotools ;# for "topo guessatom"
     package require cafe_tools
@@ -74,8 +74,8 @@ namespace eval ::cafe::mmpbsa:: {
 }
 
 # print usage info
-proc ::cafe::mmpbsa::print_usage { } {
-    show -info "Usage: mmpbsa -top filename -trj filename \[-args...\]"
+proc ::cafe::pb_only::print_usage { } {
+    show -info "Usage: pb_only -top filename -trj filename \[-args...\]"
     show -info "Mandatory arguments:"
     show -info "  -top <topology filename>"
     show -info "  -trj <trajectory filename>"
@@ -127,7 +127,7 @@ proc ::cafe::mmpbsa::print_usage { } {
     show ""
 }
 
-proc ::cafe::mmpbsa::mmpbsa { args } {
+proc ::cafe::pb_only::pb_only { args } {
     variable validargs
 
     variable topfile
@@ -499,7 +499,7 @@ proc ::cafe::mmpbsa::mmpbsa { args } {
 
     show -info "Generating new trajectory for complex"
 
-    set com_trj "_mmpbsa_com_tmp.dcd"
+    set com_trj "_pb_only_com_tmp.dcd"
 
     animate write dcd $com_trj waitfor all skip $stride $currmol
 
@@ -681,7 +681,7 @@ proc ::cafe::mmpbsa::mmpbsa { args } {
     show -info "Total elapsed time: $d days $h hrs $m min $s sec"
 }
 
-proc ::cafe::mmpbsa::write_out { fp title end ele_list vdw_list pb_list sa_list } {
+proc ::cafe::pb_only::write_out { fp title end ele_list vdw_list pb_list sa_list } {
     variable mm
     variable pb
     variable sa
@@ -746,7 +746,7 @@ proc ::cafe::mmpbsa::write_out { fp title end ele_list vdw_list pb_list sa_list 
 # ######################################################################
 #                            MM related
 # ######################################################################
-proc ::cafe::mmpbsa::calc_mm { molid prefix selstr trajname } {
+proc ::cafe::pb_only::calc_mm { molid prefix selstr trajname } {
     variable first
     variable stride
     variable debug
@@ -796,7 +796,7 @@ proc ::cafe::mmpbsa::calc_mm { molid prefix selstr trajname } {
 }
 
 # calculate MM and/or GB by NAMD
-proc ::cafe::mmpbsa::run_namd { molid prefix selstr trajname } {
+proc ::cafe::pb_only::run_namd { molid prefix selstr trajname } {
     variable mm_exe
     variable debug
 
@@ -809,7 +809,7 @@ proc ::cafe::mmpbsa::run_namd { molid prefix selstr trajname } {
 
 # write a NAMD configuration file
 # revised from namdenergy1.4
-proc ::cafe::mmpbsa::write_namd_conf { molid prefix selstr trajname } {
+proc ::cafe::pb_only::write_namd_conf { molid prefix selstr trajname } {
     variable toptype
     variable topfile
     variable parfile
@@ -908,7 +908,7 @@ proc ::cafe::mmpbsa::write_namd_conf { molid prefix selstr trajname } {
 # ######################################################################
 #                              PB related
 # ######################################################################
-proc ::cafe::mmpbsa::assign_radii { molid type args } {
+proc ::cafe::pb_only::assign_radii { molid type args } {
     switch $type {
         bondi     { assign_radii_bondi $molid }
         rowland   { assign_radii_rowland $molid }
@@ -927,7 +927,7 @@ proc ::cafe::mmpbsa::assign_radii { molid type args } {
 # **************** General ****************
 
 # assign Bondi radii (J Phys Chem 1964, 68, 441-452)
-proc ::cafe::mmpbsa::assign_radii_bondi { molid } {
+proc ::cafe::pb_only::assign_radii_bondi { molid } {
     # element guessed from mass should be more accurate; however,
     # there is a bug in topotools1.5 plugin, line 43:
     # "$s set element [lindex $elements [ptefrommass $idx]]"
@@ -940,7 +940,7 @@ proc ::cafe::mmpbsa::assign_radii_bondi { molid } {
 }
 
 # Rowland and Taylor (J Phys Chem 1996, 100, 7384-7391)
-proc ::cafe::mmpbsa::assign_radii_rowland { molid } {
+proc ::cafe::pb_only::assign_radii_rowland { molid } {
     assign_radii_bondi $molid
 
     [atomselect $molid "element 'H'"] set radius 1.10
@@ -956,7 +956,7 @@ proc ::cafe::mmpbsa::assign_radii_rowland { molid } {
 
 # assign PARSE radii (J Phys Chem 1994, 98, 1978-1988)
 # atoms not specified here will use default values in VMD
-proc ::cafe::mmpbsa::assign_radii_parse { molid { opt "-mod" } } {
+proc ::cafe::pb_only::assign_radii_parse { molid { opt "-mod" } } {
     # unknown atoms were set to 1.5 in AMBER; however, I set them
     # according to either Pauling or the value guessed by VMD
     #[atomselect $molid "all"] set radius 1.50
@@ -1011,7 +1011,7 @@ proc ::cafe::mmpbsa::assign_radii_parse { molid { opt "-mod" } } {
 # **************** For CHARMM ****************
 
 # assign CHARMM radii based on CHARMM force field parameters
-proc ::cafe::mmpbsa::assign_radii_charmm { molid args } {
+proc ::cafe::pb_only::assign_radii_charmm { molid args } {
     set paramlist { }
 
     foreach f $args {
@@ -1042,7 +1042,7 @@ proc ::cafe::mmpbsa::assign_radii_charmm { molid args } {
 
 # assign modified CHARMM radii developed by Roux and coworkers
 # (J Phys Chem B 1997, 101, 5239-5248 & J Phys Chem B 2002, 106, 11026-11035)
-proc ::cafe::mmpbsa::assign_radii_roux { molid } {
+proc ::cafe::pb_only::assign_radii_roux { molid } {
     # **************** General ****************
     assign_radii_bondi $molid
 
@@ -1213,14 +1213,14 @@ proc ::cafe::mmpbsa::assign_radii_roux { molid } {
 # **************** For AMBER ****************
 
 # assign radii based on a given AMBER PARM7 file
-proc ::cafe::mmpbsa::assign_radii_parm7 { molid args } {
+proc ::cafe::pb_only::assign_radii_parm7 { molid args } {
     set rs [parse_parm7 $args]
     [atomselect $molid "all"] set radius $rs
 }
 
 # unfortunately, VMD discards the radii info in a PARM7 file,
 # so I have to re-parse it myself.
-proc ::cafe::mmpbsa::parse_parm7 { fname } {
+proc ::cafe::pb_only::parse_parm7 { fname } {
     if { [catch {set fp [open $fname r]} err] } {
         show -err "Failed to open PARM7 file: $fname"
     }
@@ -1286,21 +1286,21 @@ proc ::cafe::mmpbsa::parse_parm7 { fname } {
 }
 
 # Swanson et al (J Chem Theory Comput 2007, 3, 170-183)
-proc ::cafe::mmpbsa::assign_radii_swanson { molid } {
+proc ::cafe::pb_only::assign_radii_swanson { molid } {
     show -err "Not implemented yet"
 }
 
 # Tan et al (J Phys Chem B 2006, 110, 18680-18687)
-proc ::cafe::mmpbsa::assign_radii_tan { molid } {
+proc ::cafe::pb_only::assign_radii_tan { molid } {
     show -err "Not implemented yet"
 }
 
 # Yamagishi et al (J Comput Chem 2014, 35, 2132-2139)
-proc ::cafe::mmpbsa::assign_radii_yamagishi { molid } {
+proc ::cafe::pb_only::assign_radii_yamagishi { molid } {
     show -err "Not implemented yet"
 }
 
-proc ::cafe::mmpbsa::calc_pb { molid prefix selstr } {
+proc ::cafe::pb_only::calc_pb { molid prefix selstr } {
     variable pb
     variable kt2kc
     variable j2cal
@@ -1377,7 +1377,7 @@ proc ::cafe::mmpbsa::calc_pb { molid prefix selstr } {
 }
 
 # solve PBE by DelPhi
-proc ::cafe::mmpbsa::run_delphi { molid prefix selstr } {
+proc ::cafe::pb_only::run_delphi { molid prefix selstr } {
     variable first
     variable stride
     variable pb_exe
@@ -1462,7 +1462,7 @@ proc ::cafe::mmpbsa::run_delphi { molid prefix selstr } {
 
 # generate a PQR file for DelPhi calculation
 # DelPhi cannot read the PQR written by "animate write pqr"
-proc ::cafe::mmpbsa::write_pqr { sel fname } {
+proc ::cafe::pb_only::write_pqr { sel fname } {
     set fp [open $fname w]
     foreach n [$sel get serial] name [$sel get name] \
             rname [$sel get resname] rid [$sel get resid] \
@@ -1476,7 +1476,7 @@ proc ::cafe::mmpbsa::write_pqr { sel fname } {
 }
 
 # generate a ligand size file for DelPhi calculation
-proc ::cafe::mmpbsa::write_siz { molid rname fname } {
+proc ::cafe::pb_only::write_siz { molid rname fname } {
     set fp [open $fname w]
     puts $fp atom__res_radius_
 
@@ -1492,7 +1492,7 @@ proc ::cafe::mmpbsa::write_siz { molid rname fname } {
 }
 
 # generate a ligand charge file for DelPhi calculation
-proc ::cafe::mmpbsa::write_crg { molid rname fname } {
+proc ::cafe::pb_only::write_crg { molid rname fname } {
     set fp [open $fname w]
     puts $fp atom__resnumbc_charge_
 
@@ -1508,7 +1508,7 @@ proc ::cafe::mmpbsa::write_crg { molid rname fname } {
 }
 
 # parse a DelPhi output file
-proc ::cafe::mmpbsa::parse_delphi { fname } {
+proc ::cafe::pb_only::parse_delphi { fname } {
     if { [catch { set fp [open $fname r] } err] } {
         show -err "Failed to open DelPhi output file: $fname"
     }
@@ -1533,7 +1533,7 @@ proc ::cafe::mmpbsa::parse_delphi { fname } {
 }
 
 # solve PBE by APBS
-proc ::cafe::mmpbsa::run_apbs { molid prefix selstr } {
+proc ::cafe::pb_only::run_apbs { molid prefix selstr } {
     variable first
     variable stride
     variable pb_exe
@@ -1665,7 +1665,7 @@ proc ::cafe::mmpbsa::run_apbs { molid prefix selstr } {
     return $pb_list
 }
 
-proc ::cafe::mmpbsa::minmax { x r } {
+proc ::cafe::pb_only::minmax { x r } {
     set xmin 9999
     set xmax -9999
 
@@ -1681,7 +1681,7 @@ proc ::cafe::mmpbsa::minmax { x r } {
 }
 
 # parse an APBS output file
-proc ::cafe::mmpbsa::parse_apbs { fname opt } {
+proc ::cafe::pb_only::parse_apbs { fname opt } {
     if { [catch { set fp [open $fname r] } err] } {
         show -err "Failed to open APBS output file: $fname"
     }
@@ -1722,7 +1722,7 @@ proc ::cafe::mmpbsa::parse_apbs { fname opt } {
 # ######################################################################
 #                             SA related
 # ######################################################################
-proc ::cafe::mmpbsa::calc_sa { molid prefix selstr } {
+proc ::cafe::pb_only::calc_sa { molid prefix selstr } {
     variable first
     variable stride
     variable sa
@@ -1765,7 +1765,7 @@ proc ::cafe::mmpbsa::calc_sa { molid prefix selstr } {
 }
 
 # calculate SASA by VMD
-proc ::cafe::mmpbsa::run_vmd { molid prefix selstr } {
+proc ::cafe::pb_only::run_vmd { molid prefix selstr } {
     variable stride
     variable sa_prbrad
     variable sa_samples
@@ -1789,7 +1789,7 @@ proc ::cafe::mmpbsa::run_vmd { molid prefix selstr } {
 }
 
 # calculate SASA/SAV/WCA by APBS
-proc ::cafe::mmpbsa::run_apbs_apol { molid prefix selstr } {
+proc ::cafe::pb_only::run_apbs_apol { molid prefix selstr } {
     variable first
     variable stride
     variable sa_exe
