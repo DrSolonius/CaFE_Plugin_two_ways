@@ -403,36 +403,7 @@ proc ::cafe::pb_only::pb_only { args } {
         show -info "It took $d days $h hrs $m min $s sec"
     }
 
-    # ************************************************************************
-    # **************** Do the Nonpolar Solvation Calculations ****************
-    # ************************************************************************
-    if { $sa } {
-        show -info "Calculating the SA term"
-        set start [clock seconds]
-
-        # assign radii again
-        set ar_args "$currmol $sa_rad"
-        if { $sa_rad eq "charmm" } {
-            foreach p $parfile { append ar_args " \"$p\"" }
-        } elseif { $sa_rad eq "parm7" } {
-            append ar_args " \"$topfile\""
-        }
-        eval assign_radii $ar_args
-
-        set com_sa_list [calc_sa $currmol com $comsel]
-
-        if { $recsel ne "" } {
-            set rec_sa_list [calc_sa $currmol rec $recsel]
-        }
-
-        if { $ligsel ne "" } {
-            set lig_sa_list [calc_sa $currmol lig $ligsel]
-        }
-
-        foreach { d h m s } [timer $start] { break }
-        show -info "It took $d days $h hrs $m min $s sec"
-    }
-
+    
     # *****************************************************
     # **************** Generate the Result ****************
     # *****************************************************
